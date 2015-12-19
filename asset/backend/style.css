@@ -1,0 +1,25 @@
+.bd_footer_bg {
+    padding: 0.7em;
+    background-color: #f7f7f7;
+    border-radius: 4px;
+    text-align: right;
+    border: 1px solid #e7e7e7;
+}
+
+.bd_title {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.bd_table_border {
+    border: 1px solid #e7e7e7;
+    border-radius: 4px;
+}
+
+.bd_page {
+    text-align: center;
+}
+
+.bd_warning_bg p{
+    padding: 15px;
+}

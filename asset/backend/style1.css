@@ -1,0 +1,328 @@
+img {
+    border: 0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url(images/body_bg.gif);
+}
+
+input {
+    font-family: 'Verdana';
+}
+
+table {
+    word-break:break-all; 
+    word-wrap:break-word; 
+} 
+
+.wapper {
+    font-size: 14px;
+    margin: 0px auto;
+    width: 95%;
+}
+
+.header {
+    height: 50px;
+}
+
+.logo {
+    margin: 10px 0px 0px 0px;
+}
+
+.nav {
+    background-image: url(images/nav_bg.png);
+    background-repeat: repeat-x;
+    height: 32px;
+}
+
+.nav .navLeft {
+    float: left;
+}
+
+.nav .navRight {
+    float: right;
+    line-height: 32px;
+    padding-right: 20px;
+    color: #fff;
+}
+
+.main {
+    padding: 10px;
+}
+
+.main .mainLeft {
+    float: left;
+    width: 13%;
+}
+
+.main .mainRight {
+    float: left;
+    background-color: #f1f1f1;
+    margin-left: 2%;
+    width: 85%;
+    margin-top: 5px;
+}
+
+.mainCenter {
+    padding: 20px;
+    background-color: #f1f1f1;
+}
+
+.menuBlock {
+    margin: 5px auto 25px auto;
+    background-color: #A4C2E1;
+}
+
+.menuBlock ul {
+    margin: 0px;
+    padding: 0px;
+}
+
+.menuBlock li {
+    background-image: url(images/menu_shooter_icon.gif);
+    background-repeat: no-repeat;
+    background-position: 5px;
+    list-style-type: none;
+    border-bottom: 1px solid #4376AB;
+    height: 20px;
+    line-height: 20px;
+    padding: 3px 5px 3px 23px;
+}
+
+.menuBlock .menuTitle {
+    background-image: url(images/menu_bg_gray_center.png);
+    background-repeat: repeat-x;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #4B494E;
+    padding-left: 8px;
+}
+
+.menuContent {
+    display: '';
+}
+
+.menuOnView {
+    font-weight: bold;
+    background-color: #DAE7A5;
+}
+
+.footer {
+    clear: both;
+    height: 38px;
+    background-color: #3A3A3A;
+    margin-bottom: 150px;
+    margin-top: 15px;
+    color: #fff;
+    text-align: right;
+    padding-right: 10px;
+    font-size: 14px;
+    line-height: 38px;
+
+}
+
+.clear {
+    font: 0;
+    clear: both;
+}
+
+.inputForm {
+
+}
+
+.inputForm tr {
+    height: 43px;
+}
+
+.inputForm th {
+    padding-left: 10px;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.inputForm td {
+    border-bottom: 1px solid #eee;
+}
+
+.inputFormSubmit {
+    height: 30px;
+    padding-top: 10px;
+    padding-left: 15px;
+    line-height: 20px;
+}
+
+.inputForm p {
+    margin: 0px;
+    padding: 3px;
+    font-size: 12px;
+    line-height: 20px;
+    color: #FF0068;
+}
+
+.inputError {
+    font-size: 12px;
+    color: #ff0000;
+}
+
+.errorMessage {
+    width: 90%;
+    margin: 5px auto 10px auto;
+    background-color: #FBE2E5;
+    border: 1px solid #FAC2C3;
+    font-size: 12px;
+    padding: 3px 10px;
+    line-height: 23px;
+}
+
+.errorMessage p {
+    margin: 0px;
+    padding: 0px;
+}
+
+.block1 {
+    
+}
+
+.contentBlock1 {
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    background-color: #fff;
+}
+
+.titleStyle1 {
+    background-image: url(images/title_bg.png);
+    background-repeat: repeat-x;
+    height: 28px;
+    color: #fff;
+    font-family: "宋体", Arial, "MS Serif";
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 28px;
+    padding-left: 10px;
+}
+
+.titleStyleRight {
+    float: right;
+    padding-right: 20px;
+}
+
+.titleStyleRightLine {
+    font-family: Arial, "MS Serif";
+    font-size: 14px;
+    padding: 0px 8px;
+    color: #ccc;
+}
+
+.listForm {
+    width: 95%;
+    text-align: center;
+}
+
+.listFormHeader {
+    background-color: #eee;
+    font-weight: bold;
+}
+
+.listForm td {
+    border-bottom: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    height: 32px;
+}
+
+.listForm th {
+    border-bottom: 1px solid #ccc;
+    font-weight: normal;
+}
+
+.listFormManage {
+    margin: 5px 0px 15px 3%;
+}
+
+.uploadAttach {
+    border: 1px dotted #CCC;
+    width: 90%;
+    margin: 15px 10px 10px 10px;
+    padding: 5px;
+}
+
+.uploadAttach ul {
+    margin: 0px;
+    padding: 0px;
+}
+
+.uploadAttach li {
+    list-style: none;
+    line-height: 25px;
+    padding: 3px 5px 3px 15px;
+    font-size: 12px;
+}
+
+.uploadAttach li a {
+    margin-right: 10px;
+}
+
+.tbTimeWidth {
+    width: 70px;
+}
+
+.pageLink {
+    text-align: center;
+    padding: 10px 0px 0px 0px;
+}
+
+.pageLink a {
+    margin: 0px 2px;
+}
+
+.pageLink strong {
+    margin: 0px 2px;
+}
+
+.line {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    height: 10px;
+    font: 0;
+}
+
+.blank10 {
+    height: 10px;
+    font: 0;
+}
+
+.blank30 {
+    height: 30px;
+    font: 0;
+}
+
+.blank20 {
+    height: 20px;
+    font: 0;
+}
+
+a:link, a:visited {
+    color: #333;
+    text-decoration: none;
+}
+
+a:hover, a:active {
+    color: #FF6699;
+    text-decoration: none;
+}
+
+a.white:link, a.white:visited {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+a.white:hover, a.white:active {
+    color: #FF6699;
+    text-decoration: none;
+}
