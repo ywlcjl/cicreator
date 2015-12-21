@@ -690,28 +690,26 @@ sss;
     
     private function _getViewIndexStr($tableName, $columns) {
         //驼峰命名
-        $tTableName = cg_get_hump_str($tableName);
+        $tTableName = cc_get_hump_str($tableName);
 
                 
         $str = <<<sss
-<?php \$this->load->view('backend/_header'); ?>
+<?php \$this->load->view('backend/_header', array('onView' => '$tTableName')); ?>
 <script type="text/javascript">
     $(document).ready(function() {
         //表单全选
         checkAll();
-        
-        //表格行效果
-        trView();
+
+        //日期控件
+        bootstrapDate();
 
         //搜索框
         searchForm();
 
-        //加载日期
-        $('input.datepicker').Zebra_DatePicker();
-
         //搜索框隐藏bug修正, 必须放在日期插件加载后隐藏
         <?php if (!\$search) : ?>
             $('#searchForm').css('display', 'none');
+            $('#searchFormTitle').attr('class', 'btn btn-default');
         <?php endif; ?>
 
         //管理操作
@@ -761,17 +759,22 @@ sss;
     });
 </script>
 
-<div class="main">
-    <div class="mainLeft">
-        <?php \$this->load->view('backend/_menu', array('onView' => '$tTableName')); ?>
+<div class="row">
+    <div class="col-md-6">
+        <p class="bd_title">{$tableName}列表</p>
     </div>
-    <div class="mainRight">
-        <div class="block1">
-            <div class="titleStyle1">{$tableName}列表<span class="titleStyleRight"><span class="titleStyleRightLine">|</span><a href="<?php echo B_URL; ?>{$tableName}/save" class="white">添加$tableName</a></span></div>
-            <div class="contentBlock1">
-                <form name="form1" id="form1" method="post" action="<?php echo B_URL; ?>$tableName/manage">
-                    <table class="listForm" width="95%" align="center" border="0" cellpadding="0" cellspacing="0" >
-                        <tr class="listFormHeader">
+    <div class="col-md-6">
+        <p class="text-right"><a href="<?php echo B_URL; ?>{$tableName}/save">添加{$tableName}</a></p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <form name="form1" id="form1" method="post" action="<?php echo B_URL; ?>{$tableName}/manage">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
 
 sss;
         
@@ -779,26 +782,21 @@ sss;
         //表格头部
         if ($columns && is_array($columns)) {
             foreach ($columns as $column) {
-                if ($column['COLUMN_NAME'] == 'id') {
-                    $str .= <<<sss
-                            <th><b>ID</b></th>
+                $str .= <<<sss
+                            <th>{$column['COLUMN_NAME']}</th>
 
 sss;
-                } else {
-                    $str .= <<<sss
-                            <td>{$column['COLUMN_NAME']}</td>
-
-sss;
-                }
             }
         }
         
         $str .= <<<sss
-                            <td>操作</td>
+                            <th>操作</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         <?php if (\$result != null) : ?>
                             <?php foreach (\$result as \$value) : ?>
-                                <tr class="listFormContent">
+                                <tr class="bd_table_tr">
 
 sss;
         
@@ -807,7 +805,11 @@ sss;
             foreach ($columns as $column) {
                 if ($column['COLUMN_NAME'] == 'id') {
                     $str .= <<<sss
-                                    <th><input type="checkbox" name="ids[]" class="ids" value="<?php echo \$value['id']; ?>" /> <?php echo \$value['id']; ?></th>
+                                    <th scope="row">
+                                        <label>
+                                            <input type="checkbox" name="ids[]" value="<?php echo \$value['id']; ?>" /> <?php echo \$value['id']; ?>
+                                        </label>
+                                    </th>
 
 sss;
                 } elseif($column['COLUMN_COMMENT'] &&  stripos($column['COLUMN_COMMENT'], '$array$') !== FALSE) {
@@ -826,19 +828,22 @@ sss;
         }
         
         $str .= <<<sss
-                                    <td>
-                                        <a href="<?php echo B_URL; ?>$tableName/save/?id=<?php echo \$value['id']; ?>">编辑</a> 
-                                    </td>
+                                    <td><a href="<?php echo B_URL; ?>$tableName/save/?id=<?php echo \$value['id']; ?>">编辑</a></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
-                    </table>
-                    <div class="pageLink"><?php echo \$this->pagination->create_links(); ?></div>
-                    <div class="listFormManage">
-                        <a href="#" id="checkAll">全选</a>
-                        <select name="manageName" id="manageName">
-                            <option value="">请选择</option>
-                            <option value="delete">删除</option>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="checkAll"> 全选
+                </label>
+
+                <select name="manageName" id="manageName">
+                    <option value="">请选择</option>
+                    <option value="delete">删除</option>
 
 sss;
         
@@ -868,7 +873,7 @@ sss;
         }
         
         $str .= <<<sss
-                        </select>
+                </select>
 
 sss;
         
@@ -880,14 +885,14 @@ sss;
                     
                     //关联id
                     $str .= <<<sss
-                        <select name="set_{$column['COLUMN_NAME']}" id="set_{$column['COLUMN_NAME']}" style="display: none;">
-                            <option value="">请选择</option>
-                            <?php if (\${$idStr}s != null) : ?>
-                                <?php foreach (\${$idStr}s as \$key=>\$value) : ?>
-                                    <option value="<?php echo \$value['id']; ?>"><?php echo \$value['id']; ?></option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
+                    <select name="set_{$column['COLUMN_NAME']}" id="set_{$column['COLUMN_NAME']}" style="display: none;">
+                        <option value="">请选择</option>
+                        <?php if (\${$idStr}s != null) : ?>
+                            <?php foreach (\${$idStr}s as \$key=>\$value) : ?>
+                                <option value="<?php echo \$value['id']; ?>"><?php echo \$value['id']; ?></option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
 
 sss;
                 } elseif ($column['COLUMN_COMMENT']) {
@@ -897,14 +902,14 @@ sss;
                     //生成代码
                     if ($statuss) {
                         $str .= <<<sss
-                        <select name="set_{$column['COLUMN_NAME']}" id="set_{$column['COLUMN_NAME']}" style="display: none;">
-                            <option value="">请选择</option>
-                            <?php if (\${$column['COLUMN_NAME']}s != null) : ?>
-                                <?php foreach (\${$column['COLUMN_NAME']}s as \$key=>\$value) : ?>
-                                    <option value="<?php echo \$key; ?>"><?php echo \$value; ?></option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
+                    <select name="set_{$column['COLUMN_NAME']}" id="set_{$column['COLUMN_NAME']}" style="display: none;">
+                        <option value="">请选择</option>
+                        <?php if (\${$column['COLUMN_NAME']}s != null) : ?>
+                            <?php foreach (\${$column['COLUMN_NAME']}s as \$key=>\$value) : ?>
+                                <option value="<?php echo \$key; ?>"><?php echo \$value; ?></option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
 
 sss;
                     }
@@ -914,20 +919,23 @@ sss;
         }
         
         $str .= <<<sss
-                        <input type="submit" name="manageButton" id="manageButton"  value="操作" onclick="return confirmAction();" />
-                    </div>
-                </form>
+                <input type="submit" id="manageButton"  value="提交" onclick="return confirmAction();" />
             </div>
+        </form>
 
-        <div class="blank30"></div>
+        <div class="bd_page">
+            <nav>
+                <ul class="pagination">
+                    <?php echo \$this->pagination->create_links(); ?>
+                </ul>
+            </nav>
+        </div>
 
-        <div class="block1">
-            <div class="titleStyle1">
-                <a href="#" id="searchFormTitle" class="white">搜索筛选+</a><span class="titleStyleRight"><span class="titleStyleRightLine">|</span><a href="<?php echo B_URL; ?>{$tableName}/index" class="white">清空条件</a></span>
-            </div>
-            <div class="contentBlock1" id="searchForm">
+        <div class="panel panel-default">
+            <div class="panel-heading"><button class="btn btn-default active" type="submit" id="searchFormTitle">条件筛选+</button></div>
+            <div class="panel-body" id="searchForm">
+                <div class="col-md-8">
                 <form action="<?php echo B_URL; ?>{$tableName}/index/" method="get">
-                    <table class="inputForm" width="95%" align="center" border="0" cellpadding="0" cellspacing="0">
 
 sss;
                 
@@ -939,20 +947,18 @@ sss;
                     //关联id
                     $idStr = substr($column['COLUMN_COMMENT'], 4);
                     $str .= <<<sss
-                        <tr>
-                            <th>{$column['COLUMN_NAME']}:</th>
-                            <td>
-                                <select name="{$column['COLUMN_NAME']}">
-                                    <option value="">请选择</option>
-                                    <?php if (\${$idStr}s != null) : ?>
-                                        <?php foreach (\${$idStr}s as \$value) : ?>
-                                            <option value="<?php echo \$value['id']; ?>" <?php if (\${$column['COLUMN_NAME']} === \$value['id']) : ?>selected="selected"<?php endif; ?>><?php echo \$value['id']; ?></option>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </select>
-                            </td>
-                            <td></td>
-                        </tr>
+                    <div class="form-group">
+                        <label for="search_category">{$column['COLUMN_NAME']}</label>
+                        <select name="{$column['COLUMN_NAME']}" class="form-control" id="search_{$column['COLUMN_NAME']}">
+                            <option value="">请选择</option>
+                            <?php if (\${$idStr}s != null) : ?>
+                                <?php foreach (\${$idStr}s as \$value) : ?>
+                                    <option value="<?php echo \$value['id']; ?>" <?php if (\${$column['COLUMN_NAME']} === \$value['id']) : ?>selected="selected"<?php endif; ?>><?php echo \$value['id']; ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+
 
 sss;
                     
@@ -962,20 +968,18 @@ sss;
 
                     if ($statuss) {
                         $str .= <<<sss
-                        <tr>
-                            <th>{$column['COLUMN_NAME']}:</th>
-                            <td>
-                                <select name="{$column['COLUMN_NAME']}">
-                                    <option value="">请选择</option>
-                                    <?php if (\${$column['COLUMN_NAME']}s != null) : ?>
-                                        <?php foreach (\${$column['COLUMN_NAME']}s as \$key=>\$value) : ?>
-                                            <option value="<?php echo \$key; ?>" <?php if (\${$column['COLUMN_NAME']} === (string)\$key) : ?>selected="selected"<?php endif; ?>><?php echo \$value; ?></option>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </select>
-                            </td>
-                            <td></td>
-                        </tr>
+                    <div class="form-group">
+                        <label for="search_status">{$column['COLUMN_NAME']}</label>
+                        <select name="{$column['COLUMN_NAME']}" class="form-control" id="search_{$column['COLUMN_NAME']}">
+                            <option value="">请选择</option>
+                            <?php if (\${$column['COLUMN_NAME']}s != null) : ?>
+                                <?php foreach (\${$column['COLUMN_NAME']}s as \$key => \$value) : ?>
+                                    <option value="<?php echo \$key; ?>" <?php if (\${$column['COLUMN_NAME']} === (string) \$key) : ?>selected="selected"<?php endif; ?>><?php echo \$value; ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+
 
 sss;
                     }
@@ -983,39 +987,32 @@ sss;
                 } elseif (in_array($column['DATA_TYPE'], array('datetime', 'timestamp'))) {
                     //日期时间
                     $str .= <<<sss
-                        <tr>
-                            <th>{$column['COLUMN_NAME']}:</th>
-                            <td>
-                                <input name="{$column['COLUMN_NAME']}_start" class="datepicker" type="text" value="<?php echo \${$column['COLUMN_NAME']}_start; ?>" /> - <input class="datepicker" name="{$column['COLUMN_NAME']}_end" type="text" value="<?php echo \${$column['COLUMN_NAME']}_end; ?>" />
-                            </td>
-                            <td></td>
-                        </tr>
+                    <div class="form-group">
+                        <label>{$column['COLUMN_NAME']}</label>
+                        <input name="{$column['COLUMN_NAME']}_start" data-provide="datepicker" class="form-control" type="text" value="<?php echo \${$column['COLUMN_NAME']}_start; ?>" placeholder=">= 起始日期"> - 
+                        <input name="{$column['COLUMN_NAME']}_end" data-provide="datepicker" class="form-control" type="text" value="<?php echo \${$column['COLUMN_NAME']}_end; ?>" placeholder="< 结束日期">
+                    </div>
 
 
 sss;
                 } else if ($column['COLUMN_COMMENT'] == '$max$' && in_array($column['DATA_TYPE'], array('int', 'tinyint', 'smallint', 'mediumint', 'bigint', 'float', 'double', 'decimal'))) {
                     //大小于号生成
                     $str .= <<<sss
-                        <tr>
-                            <th>{$column['COLUMN_NAME']}范围:</th>
-                            <td>
-                                <input name="{$column['COLUMN_NAME']}_min" type="text" value="<?php echo \${$column['COLUMN_NAME']}_min; ?>" /> - <input name="{$column['COLUMN_NAME']}_max" type="text" value="<?php echo \${$column['COLUMN_NAME']}_max; ?>" />
-                            </td>
-                            <td></td>
-                        </tr>
+                    <div class="form-group">
+                        <label>{$column['COLUMN_NAME']}范围</label>
+                        <input name="{$column['COLUMN_NAME']}_min" class="form-control" type="text" value="<?php echo \${$column['COLUMN_NAME']}_min; ?>" placeholder=">= input"> - 
+                        <input name="{$column['COLUMN_NAME']}_max" class="form-control" type="text" value="<?php echo \${$column['COLUMN_NAME']}_max; ?>" placeholder="< input">
+                    </div>
 
 
 sss;
                 } else {
                     //普通的数字
                     $str .= <<<sss
-                        <tr>
-                            <th>{$column['COLUMN_NAME']}:</th>
-                            <td>
-                                <input name="{$column['COLUMN_NAME']}" type="text" value="<?php echo \${$column['COLUMN_NAME']}; ?>" />
-                            </td>
-                            <td></td>
-                        </tr>
+                    <div class="form-group">
+                        <label for="search_id">{$column['COLUMN_NAME']}</label>
+                        <input type="text" name="{$column['COLUMN_NAME']}" class="form-control" id="search_{$column['COLUMN_NAME']}" value="<?php echo \${$column['COLUMN_NAME']}; ?>">
+                    </div>
 
 
 sss;
@@ -1026,16 +1023,17 @@ sss;
 
         //结尾
         $str .= <<<model
-                    </table>
                     <input name="search" type="hidden" value="1" />
-                    <div class="inputFormSubmit">
-                        <input type="submit" name="button"  value="搜索" />
-                    </div>
+                    <input class="btn btn-primary" type="submit" value="筛选"> 
+                    <a class="btn btn-default" href="<?php echo B_URL; ?>{$tableName}/index" role="button">清空条件</a>
                 </form>
+                </div>
             </div>
         </div>
+        
     </div>
 </div>
+
 <?php \$this->load->view('backend/_footer'); ?>
 
 model;
@@ -1047,32 +1045,34 @@ model;
     
     private function _getViewSaveStr($tableName, $columns) {
         //驼峰命名
-        $tTableName = cg_get_hump_str($tableName);
+        $tTableName = cc_get_hump_str($tableName);
         
         $str = <<<model
-<?php \$this->load->view('backend/_header'); ?>
+<?php \$this->load->view('backend/_header', array('onView' => '$tTableName')); ?>
 <script type="text/javascript">
-    $(document).ready(function() {
+    $(document).ready(function () {
+
     });
 </script>
-<div class="main">
-    <div class="mainLeft">
-        <?php \$this->load->view('backend/_menu', array('onView' => '$tTableName')); ?>
-    </div>
-    <div class="mainRight">
-        <div class="block1">
-            <div class="titleStyle1">
-                $tableName 编辑<span class="titleStyleRight"><span class="titleStyleRightLine">|</span><a href="<?php echo B_URL; ?>$tableName/index" class="white">返回列表</a></span>
-            </div>
-            <div class="contentBlock1">
-                <?php if (\$message) : ?>
-                    <div class="errorMessage">
-                        <?php echo \$message; ?>
-                    </div>
-                <?php endif; ?>
 
-                <form action="<?php echo B_URL; ?>$tableName/save" method="post">
-                    <table class="inputForm" width="95%" align="center" border="0" cellpadding="0" cellspacing="0">
+<div class="row">
+    <div class="col-md-6">
+        <p class="bd_title">编辑$tableName</p>
+    </div>
+    <div class="col-md-6">
+        <p class="text-right"><a href="<?php echo B_URL; ?>$tableName/index">返回列表</a></p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <?php if (isset(\$message) && \$message) : ?>
+            <div class="bd_warning_bg">
+                <p class="bg-warning"><?php echo \$message; ?></p>
+            </div>
+        <?php endif; ?>
+
+        <form action="<?php echo B_URL; ?>$tableName/save" method="post">
 
 model;
 
@@ -1084,20 +1084,19 @@ model;
                     //关联id
                     $idStr = substr($column['COLUMN_COMMENT'], 4);
                     $str .= <<<sss
-                        <tr>
-                            <th>{$column['COLUMN_NAME']}:</th>
-                            <td>
-                                <select name="{$column['COLUMN_NAME']}">
-                                    <?php if (\${$idStr}s != null) : ?>
-                                        <?php foreach (\${$idStr}s as \$value) : ?>
-                                            <option value="<?php echo \$value['id']; ?>" <?php if (\$row['{$column['COLUMN_NAME']}'] === (string)\$value['id'] || set_value('{$column['COLUMN_NAME']}') === (string)\$value['id']) : ?>selected="selected"<?php endif; ?>><?php echo \$value['id']; ?></option>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </select>
-                                <?php echo form_error('{$column['COLUMN_NAME']}'); ?>
-                            </td>
-                            <td></td>
-                        </tr>
+           <div class="form-group<?php if (form_error('{$column['COLUMN_NAME']}')) : ?> has-error<?php endif; ?>">
+                <label for="input_{$column['COLUMN_NAME']}" class="control-label">{$column['COLUMN_NAME']}</label>
+                <select name="{$column['COLUMN_NAME']}" class="form-control">
+                    <option value="">请选择</option>
+                    <?php if (\${$idStr}s != null) : ?>
+                        <?php foreach (\${$idStr}s as \$value) : ?>
+                            <option value="<?php echo \$value['id']; ?>" <?php if (\$row['{$column['COLUMN_NAME']}'] === (string)\$value['id'] || set_value('{$column['COLUMN_NAME']}') === (string)\$value['id']) : ?>selected="selected"<?php endif; ?>><?php echo \$value['id']; ?></option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+                <span id="helpBlock" class="help-block"></span>
+                <?php echo \$this->backend_lib->formError('{$column['COLUMN_NAME']}'); ?>
+            </div>
 
 
 sss;
@@ -1108,20 +1107,18 @@ sss;
 
                     if ($statuss) {
                         $str .= <<<sss
-                        <tr>
-                            <th>{$column['COLUMN_NAME']}:</th>
-                            <td>
-                                <select name="{$column['COLUMN_NAME']}">
-                                    <?php if (\${$column['COLUMN_NAME']}s != null) : ?>
-                                        <?php foreach (\${$column['COLUMN_NAME']}s as \$key=>\$value) : ?>
-                                            <option value="<?php echo \$key; ?>" <?php if (\$row['{$column['COLUMN_NAME']}'] === (string)\$key || set_value('{$column['COLUMN_NAME']}') === (string)\$key) : ?>selected="selected"<?php endif; ?>><?php echo \$value; ?></option>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </select>
-                                <?php echo form_error('{$column['COLUMN_NAME']}'); ?>
-                            </td>
-                            <td></td>
-                        </tr>
+            <div class="form-group<?php if (form_error('{$column['COLUMN_NAME']}')) : ?> has-error<?php endif; ?>">
+                <label for="input_{$column['COLUMN_NAME']}" class="control-label">{$column['COLUMN_NAME']}</label>
+                <select name="{$column['COLUMN_NAME']}" class="form-control" id="input_{$column['COLUMN_NAME']}">
+                    <?php if (\${$column['COLUMN_NAME']}s) : ?>
+                        <?php foreach (\${$column['COLUMN_NAME']}s as \$key => \$value) : ?>
+                            <option value="<?php echo \$key; ?>" <?php if (\$row['{$column['COLUMN_NAME']}'] === (string) \$key || set_value('{$column['COLUMN_NAME']}') === (string) \$key) : ?>selected="selected"<?php endif; ?>><?php echo \$value; ?></option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+                <span id="helpBlock" class="help-block"></span>
+                <?php echo \$this->backend_lib->formError('{$column['COLUMN_NAME']}'); ?>
+            </div>
 
 
 sss;
@@ -1130,28 +1127,24 @@ sss;
                 } else if (in_array($column['DATA_TYPE'], array('text'))) {
                     //文本框
                     $str .= <<<sss
-                        <tr>
-                            <th>{$column['COLUMN_NAME']}:</th>
-                            <td>
-                                <textarea name="{$column['COLUMN_NAME']}" cols="80" rows="5"><?php echo \$this->backend_lib->getValue(set_value('{$column['COLUMN_NAME']}'), \$row['{$column['COLUMN_NAME']}']); ?></textarea>
-                                <?php echo form_error('content'); ?>
-                            </td>
-                            <td></td>
-                        </tr>
+            <div class="form-group<?php if (form_error('{$column['COLUMN_NAME']}')) : ?> has-error<?php endif; ?>">
+                <label for="input_{$column['COLUMN_NAME']}" class="control-label">{$column['COLUMN_NAME']}</label>
+                <textarea name="{$column['COLUMN_NAME']}" id="input_{$column['COLUMN_NAME']}" aria-describedby="helpBlock" class="form-control" rows="3"><?php echo \$this->backend_lib->getValue(set_value('{$column['COLUMN_NAME']}'), \$row['{$column['COLUMN_NAME']}']); ?></textarea>
+                <span id="helpBlock" class="help-block"></span>
+                <?php echo \$this->backend_lib->formError('{$column['COLUMN_NAME']}'); ?>
+            </div>
 
 
 sss;
                 } else if(!in_array($column['COLUMN_NAME'], array('id', 'create_time', 'update_time'))) {
                     //普通
                     $str .= <<<sss
-                        <tr>
-                            <th>{$column['COLUMN_NAME']}:</th>
-                            <td>
-                                <input name="{$column['COLUMN_NAME']}" type="text" value="<?php echo \$this->backend_lib->getValue(set_value('{$column['COLUMN_NAME']}'), \$row['{$column['COLUMN_NAME']}']); ?>" />
-                                <?php echo form_error('{$column['COLUMN_NAME']}'); ?>
-                            </td>
-                            <td></td>
-                        </tr>
+            <div class="form-group<?php if (form_error('{$column['COLUMN_NAME']}')) : ?> has-error<?php endif; ?>">
+                <label for="input_{$column['COLUMN_NAME']}" class="control-label">{$column['COLUMN_NAME']}</label>
+                <input type="text" name="{$column['COLUMN_NAME']}" id="input_{$column['COLUMN_NAME']}" class="form-control" aria-describedby="helpBlock" value="<?php echo \$this->backend_lib->getValue(set_value('{$column['COLUMN_NAME']}'), \$row['{$column['COLUMN_NAME']}']); ?>">
+                <span id="helpBlock" class="help-block"></span>
+                <?php echo \$this->backend_lib->formError('{$column['COLUMN_NAME']}'); ?>
+            </div>
 
 
 sss;
@@ -1162,18 +1155,16 @@ sss;
 
         //结尾
         $str .= <<<model
-                    </table>
-                    <input name="save" type="hidden" value="1" />
-                    <input name="id" type="hidden" value="<?php echo \$this->backend_lib->getValue(set_value('id'), \$row['id']); ?>" />
-                    <div class="inputFormSubmit">
-                        <input type="submit" name="button"  value="保存" />
-                    </div>
-                </form>
-            </div>
-        </div>
+            <input name="save" type="hidden" value="1" />
+            <input name="id" type="hidden" value="<?php echo \$this->backend_lib->getValue(set_value('id'), \$row['id']); ?>" />
+            <input class="btn btn-primary" type="submit" value="保存" />
+        </form>
+        <p>&nbsp;</p>
     </div>
 </div>
+
 <?php \$this->load->view('backend/_footer'); ?>
+
 
 model;
 

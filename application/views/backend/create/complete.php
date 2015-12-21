@@ -3,34 +3,27 @@
     $(document).ready(function() {
     });
 </script>
-<div class="main">
-    <div class="mainLeft">
-        <?php $this->load->view('backend/_menu', array('onView' => 'create')); ?>
+<div class="row">
+    <div class="col-md-6">
+        <p class="bd_title">自动生成代码完成</p>
     </div>
-    <div class="mainRight">
-        <div class="block1">
-            <div class="titleStyle1">
-                生成代码完成<span class="titleStyleRight"><span class="titleStyleRightLine">|</span><a href="<?php echo B_URL; ?>create" class="white">返回开始</a></span>
-            </div>
-            <div class="contentBlock1">
-                <?php if ($message) : ?>
-                    <div class="errorMessage">
-                        <?php echo $message; ?>
-                    </div>
-                <?php endif; ?>
-
-
-                <table class="inputForm" width="95%" align="center" border="0" cellpadding="0" cellspacing="0">
-                    <tr>
-                        <th><?php echo $tableName; ?>表的文件已创建完成</th>
-                        <td>您需要手动添加菜单链接, views/backend/_menu.php</td>
-                        <td><a href="<?php echo B_URL.$tableName; ?>/" target="_blank">查看页面</a> </td>
-                    </tr>
-                </table>
-
-
-            </div>
-        </div>
+    <div class="col-md-6">
+        <p class="text-right"><a href="<?php echo B_URL; ?>create/index">返回开始</a></p>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-md-8">
+        <?php if (isset($message) && $message) : ?>
+            <div class="bd_warning_bg">
+                <p class="bg-warning"><?php echo $message; ?></p>
+            </div>
+        <?php endif; ?>
+        <p><?php echo $tableName; ?>表的文件已创建完成</p>
+        <p>您需要手动添加菜单链接, views/backend/_header.php</p>
+        <p><a href="<?php echo B_URL.$tableName; ?>/">查看页面</a> </p>
+        <p>&nbsp;</p>
+    </div>
+</div>
+
 <?php $this->load->view('backend/_footer'); ?>

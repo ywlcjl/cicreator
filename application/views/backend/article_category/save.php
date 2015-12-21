@@ -9,7 +9,7 @@
         <p class="bd_title">编辑分类</p>
     </div>
     <div class="col-md-6">
-        <p class="text-right"><a href="<?php echo B_URL; ?>article_category/index" class="white">返回列表</a></p>
+        <p class="text-right"><a href="<?php echo B_URL; ?>article_category/index">返回列表</a></p>
     </div>
 </div>
 
@@ -72,7 +72,7 @@
 
             <input name="save" type="hidden" value="1" />
             <input name="id" type="hidden" value="<?php echo $this->backend_lib->getValue(set_value('id'), $row['id']); ?>" />
-            <input class="btn btn-default" type="submit" value="保存" />
+            <input class="btn btn-primary" type="submit" value="保存" />
         </form>
         <p>&nbsp;</p>
     </div>

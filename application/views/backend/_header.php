@@ -7,26 +7,26 @@
         <title>CICreator网站后台</title>
 
         <!-- Bootstrap -->
-        <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/asset/backend/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
-          <script src="http://cig.local/bootstrap/html5shiv.min.js"></script>
-          <script src="http://cig.local/bootstrap/respond.min.js"></script>
+          <script src="http://<?php echo $_SERVER['HTTP_HOST']; ?>/asset/js/html5shiv.min.js"></script>
+          <script src="http://<?php echo $_SERVER['HTTP_HOST']; ?>/asset/js/respond.min.js"></script>
         <![endif]-->
         
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-        <script src="/bootstrap/jquery.min.js"></script>
+        <script src="/asset/js/jquery.min.js"></script>
         <!-- Include all compiled plugins (below), or include individual files as needed -->
-        <script src="/bootstrap/js/bootstrap.min.js"></script>
+        <script src="/asset/backend/bootstrap/js/bootstrap.min.js"></script>
         
-        <link href="/bootstrap/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
-        <script src="/bootstrap/datepicker/js/bootstrap-datepicker.min.js"></script>
-        <script src="/bootstrap/datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+        <link href="/asset/backend/bootstrap/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
+        <script src="/asset/backend/bootstrap/datepicker/js/bootstrap-datepicker.min.js"></script>
+        <script src="/asset/backend/bootstrap/datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
 
         <link href="/asset/backend/style.css" rel="stylesheet" type="text/css" />
-        <script type="text/javascript" src="/asset/backend/public.js"></script>
+        <script src="/asset/backend/public.js" type="text/javascript"></script>
         
     </head>
 

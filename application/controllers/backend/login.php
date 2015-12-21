@@ -75,7 +75,7 @@ class Login extends CI_Controller {
                 //更新最后登录时间
                 $this->admin_model->save(array('id'=>$admin['id'], 'login_time'=>date('Y-m-d H:i:s')));
                 
-                cg_to_link(B_URL.'home');
+                cc_to_link(B_URL.'home');
             } else {
                 $data['message'] = $message;
                 
@@ -93,7 +93,7 @@ class Login extends CI_Controller {
         unset($_SESSION['adminPermission']);
         session_destroy();
 
-        cg_to_link(B_URL.'login');
+        cc_to_link(B_URL.'login');
     }
 
 }

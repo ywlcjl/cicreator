@@ -29,7 +29,6 @@ class Attach extends CI_Controller {
         $inParams = array();
         $likeParam = array();
 
-        $data['types'] = $this->attach_model->getType();
         $data['articles'] = $this->article_model->getResult(array(), '', '', 'id DESC');
 
         //搜索筛选
@@ -127,16 +126,16 @@ class Attach extends CI_Controller {
 
     public function save() {
         $data = array();
-        $data['types'] = $this->attach_model->getType();
         $data['articles'] = $this->article_model->getResult(array(), '', '', 'id DESC');
 
         if ($this->input->post('save', TRUE) > 0) {
             $this->form_validation->set_rules('id', 'id', 'trim');
-            $this->form_validation->set_rules('name', 'name', 'required|trim');
-            $this->form_validation->set_rules('orig_name', 'orig_name', 'required|trim');
-            $this->form_validation->set_rules('path', 'path', 'required|trim');
-            $this->form_validation->set_rules('type', 'type', 'required|trim');
+            $this->form_validation->set_rules('name', 'name', 'trim');
+            $this->form_validation->set_rules('orig_name', 'orig_name', 'trim');
+            $this->form_validation->set_rules('path', 'path', 'trim');
+            $this->form_validation->set_rules('type', 'type', 'trim');
             $this->form_validation->set_rules('article_id', 'article_id', 'trim');
+            $this->form_validation->set_rules('create_time', 'create_time', 'trim');
 
         $param = array(
             'id' => $this->input->post('id', TRUE),
@@ -201,35 +200,9 @@ class Attach extends CI_Controller {
                         $param = array(
                             'id' => $id,
                         );
-                        
-                        $row = $this->attach_model->getRow($param);
-                        //删除附件
-                        $imgPath = $row['path'];
-                        $imgPathThumb = cg_get_img_path($row['path'], 'thumb');
-                        if (is_file($imgPath)) {
-                            unlink($imgPath);
-                        }
-                        if (is_file($imgPathThumb)) {
-                            unlink($imgPathThumb);
-                        }
-
                         $this->attach_model->delete($param);
                     }
                     $message = '删除成功';
-                } elseif ($manageName == 'set_type') {
-                    $setValue = $this->input->post('set_type', TRUE);
-                    if ($setValue !== '') {
-                        foreach ($ids as $key => $id) {
-                            $param = array(
-                                'id' => $id,
-                                'type' => $setValue,
-                            );
-                            $this->attach_model->save($param);
-                        }
-                        $message = '操作成功';
-                    } else {
-                        $message = '设置不能为空.';
-                    }
                 } elseif ($manageName == 'set_article_id') {
                     $setValue = $this->input->post('set_article_id', TRUE);
                     if ($setValue !== '') {
@@ -252,11 +225,49 @@ class Attach extends CI_Controller {
         $this->backend_lib->showMessage(B_URL. 'attach', $message);
     }
     
-    /**
-     * 上传文章附件 
-     */
-    public function upload() {
+    public function ajaxDelete() {
         $data = array();
+        $id = $this->input->post('id', TRUE);
+
+        $success = 0;
+        $message = '';
+        
+        if ($id) {
+            $attach = $this->attach_model->getRow(array('id'=>$id));
+            $delete = $this->attach_model->delete(array('id' => $id));
+            if ($delete) {
+                //删除附件
+                $imgPath = $attach['path'];
+                $imgPathThumb = cc_get_img_path($attach['path'], 'thumb');
+                if(is_file($imgPath)) {
+                    unlink($imgPath);
+                }
+                if(is_file($imgPathThumb)) {
+                    unlink($imgPathThumb);
+                }
+                
+                $success = 1;
+                $message = '删除成功';
+            } else {
+                $message = '删除失败';
+            }
+        } else {
+            $message = 'ID有误';
+        }
+
+        $data['success'] = $success;
+        $data['message'] = $message;
+
+        echo json_encode($data);
+    }
+    
+    public function ajaxUpload() {
+        $data = array();
+
+        $success = 0;
+        $message = '';
+        $data['result'] = array();
+        
         if ($this->input->post('post', TRUE) > 0) {
             //附件目录
             $pathDir = $this->backend_lib->getUploadDir('attach');
@@ -273,9 +284,9 @@ class Attach extends CI_Controller {
             $this->upload->initialize($config);
 
             if (!$this->upload->do_upload()) {
-                $data['error'] = $this->upload->display_errors();
+                $message = $this->upload->display_errors();
             } else {
-                //上传完成的数组
+            //上传完成的数组
                 $uploadData = $this->upload->data();
 
                 //图片路径
@@ -309,46 +320,22 @@ class Attach extends CI_Controller {
                 $this->attach_model->save($param);
 
                 $attachId = $this->db->insert_id();
-
-                $data['attachId'] = $attachId;
-                $data['uploadData'] = $uploadData;
-                $data['picUrl'] = $pathDir . $uploadData['file_name'];
-                $data['picUrlThumb'] = $pathDir . cg_get_img_path($uploadData['file_name'], 'thumb');
-            }
-            $this->load->view('backend/attach/upload', $data);
-        } else {
-            $this->load->view('backend/attach/upload', $data);
-        }
-    }
-
-    public function ajaxDelete() {
-        $data = array();
-        $id = $this->input->post('id', TRUE);
-
-        $success = 0;
-        $message = '';
-        
-        if ($id) {
-            $attach = $this->attach_model->getRow(array('id'=>$id));
-            $delete = $this->attach_model->delete(array('id' => $id));
-            if ($delete) {
-                //删除附件
-                $imgPath = $attach['path'];
-                $imgPathThumb = cg_get_img_path($attach['path'], 'thumb');
-                if(is_file($imgPath)) {
-                    unlink($imgPath);
-                }
-                if(is_file($imgPathThumb)) {
-                    unlink($imgPathThumb);
-                }
                 
-                $success = 1;
-                $message = '删除成功';
-            } else {
-                $message = '删除失败';
+                if ($attachId) {
+                    $success = 1;
+                    $message = '上传成功';
+                    
+                    $data['attachId'] = $attachId;
+                    $data['result'] = $uploadData;
+                    $data['picUrl'] = $pathDir . $uploadData['file_name'];
+                    $data['picUrlThumb'] = $pathDir . cc_get_img_path($uploadData['file_name'], 'thumb');
+                } else {
+                    $message = '上传失败';
+                }
             }
+        
         } else {
-            $message = 'ID有误';
+            $message = 'none';
         }
 
         $data['success'] = $success;
@@ -356,4 +343,5 @@ class Attach extends CI_Controller {
 
         echo json_encode($data);
     }
+    
 }

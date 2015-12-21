@@ -10,7 +10,7 @@
 
 <div class="row">
     <div class="col-md-8">
-        <p><a href="<?php echo B_URL; ?>home/clearCache" target="_blank" >删除缓存</a></p>
+        <p><a class="btn btn-default" role="button" href="<?php echo B_URL; ?>home/clearCache" target="_blank" onclick="return confirmAction();">删除缓存</a></p>
     </div>
 </div>
 

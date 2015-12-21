@@ -21,7 +21,7 @@
         <p class="bd_title">管理员列表</p>
     </div>
     <div class="col-md-6">
-        <p class="text-right"><a href="<?php echo B_URL; ?>admin/save" class="white">添加管理员</a></p>
+        <p class="text-right"><a href="<?php echo B_URL; ?>admin/save">添加管理员</a></p>
     </div>
 </div>
 <div class="row">

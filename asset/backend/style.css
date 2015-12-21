@@ -23,3 +23,15 @@
 .bd_warning_bg p{
     padding: 15px;
 }
+
+.bd_article_attach {
+    border: 1px solid #d7d7d7;
+    border-radius: 4px;
+    padding: 0.5em;
+}
+
+.bd_attach_img img {
+    width: 6em;
+    min-width: 6em;
+    min-height: 6em;
+}

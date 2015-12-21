@@ -21,7 +21,7 @@
         <p class="bd_title">系统权限列表</p>
     </div>
     <div class="col-md-6">
-        <p class="text-right"><a href="<?php echo B_URL; ?>admin_permission/save" class="white">添加权限</a></p>
+        <p class="text-right"><a href="<?php echo B_URL; ?>admin_permission/save">添加权限</a></p>
     </div>
 </div>
 <div class="row">

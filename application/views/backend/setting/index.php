@@ -9,7 +9,7 @@
         <p class="bd_title">系统设置</p>
     </div>
     <div class="col-md-6">
-        <p class="text-right"><a href="<?php echo B_URL; ?>setting/save" class="white">添加设置</a></p>
+        <p class="text-right"><a href="<?php echo B_URL; ?>setting/save">添加设置</a></p>
     </div>
 </div>
 <div class="row">

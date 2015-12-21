@@ -21,7 +21,7 @@
         <p class="bd_title">分类列表</p>
     </div>
     <div class="col-md-6">
-        <p class="text-right"><a href="<?php echo B_URL; ?>article_category/save" class="white">添加分类</a></p>
+        <p class="text-right"><a href="<?php echo B_URL; ?>article_category/save">添加分类</a></p>
     </div>
 </div>
 <div class="row">

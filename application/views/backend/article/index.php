@@ -45,7 +45,7 @@
         <p class="bd_title">文章列表</p>
     </div>
     <div class="col-md-6">
-        <p class="text-right"><a href="<?php echo B_URL; ?>article/save" class="white">添加文章</a></p>
+        <p class="text-right"><a href="<?php echo B_URL; ?>article/save">添加文章</a></p>
     </div>
 </div>
 
@@ -149,17 +149,17 @@
                 <form action="<?php echo B_URL; ?>article/index/" method="get">
                     <div class="form-group">
                         <label for="search_id">ID</label>
-                        <input type="text" class="form-control" id="search_id" value="<?php echo $id; ?>">
+                        <input type="text" name="id" class="form-control" id="search_id" value="<?php echo $id; ?>">
                     </div>
 
                     <div class="form-group">
                         <label for="search_title">标题</label>
-                        <input type="text" class="form-control" id="search_title" value="<?php echo $title; ?>">
+                        <input type="text" name="title" class="form-control" id="search_title" value="<?php echo $title; ?>">
                     </div>
                     
                     <div class="form-group">
                         <label for="search_author">作者</label>
-                        <input type="text" class="form-control" id="search_author" value="<?php echo $author; ?>">
+                        <input type="text" name="author" class="form-control" id="search_author" value="<?php echo $author; ?>">
                     </div>
                     
                     <div class="form-group">

@@ -26,7 +26,7 @@ class Backend_lib extends Base_lib {
      */
     public function checkLoginOrJump() {
         if (!$this->checkLogin()) {
-            cg_to_link(B_URL . 'login');
+            cc_to_link(B_URL . 'login');
         }
     }
 
@@ -50,7 +50,7 @@ class Backend_lib extends Base_lib {
     public function checkPermissionOrJump($permission) {
         if (!$this->checkPermission($permission)) {
             $message = '权限不足';
-            cg_to_link(B_URL . "home/showMessage/?message=$message");
+            cc_to_link(B_URL . "home/showMessage/?message=$message");
         }
     }
 
@@ -120,7 +120,7 @@ class Backend_lib extends Base_lib {
         $url = base64_encode($url);
 
         $jumpUrl = B_URL . "home/showMessage/?url=$url&message=$message&second=$second";
-        cg_to_link($jumpUrl);
+        cc_to_link($jumpUrl);
     }
 
     /**

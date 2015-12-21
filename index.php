@@ -22,6 +22,9 @@
 //使用普通session ~cc
 session_start();
 
+//CICreator version
+define('CC_VERSION', '1.3.0');
+
 //设置默认时间 ~cc
 date_default_timezone_set('Asia/Shanghai');
 

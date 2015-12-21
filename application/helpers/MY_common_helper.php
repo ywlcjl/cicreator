@@ -6,20 +6,20 @@ if (!defined('BASEPATH'))
 /**
  * 常用辅助函数
  */
-if (!function_exists('cg_to_link')) {
+if (!function_exists('cc_to_link')) {
 
     /**
      * 跳转链接
      * @param type $url
      */
-    function cg_to_link($url) {
+    function cc_to_link($url) {
         header("Location:$url");
         exit;
     }
 
 }
 
-if (!function_exists('cg_get_img_path')) {
+if (!function_exists('cc_get_img_path')) {
 
     /**
      * 获取缩略图文件名
@@ -27,7 +27,7 @@ if (!function_exists('cg_get_img_path')) {
      * @param type $size
      * @return type
      */
-    function cg_get_img_path($path, $size = 'thumb') {
+    function cc_get_img_path($path, $size = 'thumb') {
         $newPath = '';
 
         if ($size) {
@@ -42,14 +42,14 @@ if (!function_exists('cg_get_img_path')) {
 }
 
 
-if (!function_exists('cg_get_file_type')) {
+if (!function_exists('cc_get_file_type')) {
 
     /**
      * 返回文件类型名
      * @param type $src
      * @return type
      */
-    function cg_get_file_type($src) {
+    function cc_get_file_type($src) {
         $result = substr($src, strrpos($src, '.') + 1, strlen($src));
         //返回jpg, png
         return $result;
@@ -58,20 +58,20 @@ if (!function_exists('cg_get_file_type')) {
 }
 
 
-if (!function_exists('cg_get_price_format')) {
+if (!function_exists('cc_get_price_format')) {
 
     /**
      * 获取价格格式
      * @param type $price
      * @return type
      */
-    function cg_get_price_format($price) {
+    function cc_get_price_format($price) {
         return sprintf('%01.2f', $price);
     }
 
 }
 
-if (!function_exists('cg_substr_utf8')) {
+if (!function_exists('cc_substr_utf8')) {
 
     /**
      * 完整字数的utf8截取
@@ -80,7 +80,7 @@ if (!function_exists('cg_substr_utf8')) {
      * @param type $length
      * @return type
      */
-    function cg_substr_utf8($string, $start, $length) {
+    function cc_substr_utf8($string, $start, $length) {
         $chars = $string;
         //echo $string[0].$string[1].$string[2];   
         $i = 0;
@@ -100,7 +100,7 @@ if (!function_exists('cg_substr_utf8')) {
 
 }
 
-if (!function_exists('cg_curl_post')) {
+if (!function_exists('cc_curl_post')) {
 
     /**
      * 模拟post提交
@@ -108,7 +108,7 @@ if (!function_exists('cg_curl_post')) {
      * @param type $vars
      * @return boolean
      */
-    function cg_curl_post($url, $vars = array()) {
+    function cc_curl_post($url, $vars = array()) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -125,14 +125,14 @@ if (!function_exists('cg_curl_post')) {
     }
 }
 
-if (!function_exists('cg_clean')) {
+if (!function_exists('cc_clean')) {
 
     /**
      * 过滤函数
      * @param type $string
      * @return type 
      */
-    function cg_clean($string) {
+    function cc_clean($string) {
         $string = trim($string);
         //需要指定编码,否则乱码
         $string = htmlspecialchars($string, ENT_QUOTES, "UTF-8");
@@ -143,20 +143,20 @@ if (!function_exists('cg_clean')) {
 
 }
 
-if (!function_exists('cg_object_to_array')) {
+if (!function_exists('cc_object_to_array')) {
 
     /**
      * stdClass 对象转化成数组
      * @param type $array
      * @return type 
      */
-    function cg_object_to_array($array) {
+    function cc_object_to_array($array) {
         if (is_object($array)) {
             $array = (array) $array;
         }
         if (is_array($array)) {
             foreach ($array as $key => $value) {
-                $array[$key] = cg_object_to_array($value);
+                $array[$key] = cc_object_to_array($value);
             }
         }
         return $array;
@@ -164,14 +164,14 @@ if (!function_exists('cg_object_to_array')) {
 
 }
 
-if (!function_exists('cg_get_hump_str')) {
+if (!function_exists('cc_get_hump_str')) {
     /**
      * 字符串转驼峰字符串
      * @param type $str
      * @param type $dstr
      * @return type
      */
-    function cg_get_hump_str($str, $dstr = '_') {
+    function cc_get_hump_str($str, $dstr = '_') {
         $result = '';
         $sTemp = explode($dstr, $str);
         if ($sTemp) {

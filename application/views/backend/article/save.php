@@ -2,12 +2,21 @@
 <script type="text/javascript" src='<?php echo base_url(); ?>plugins/tinymce/tinymce.min.js'></script>
 <script>
     tinymce.init({
-        selector: '#editor_id'
+        selector: '#editor_id',
+        language: 'zh_CN',
+        height: 300,
+        plugins: [
+            'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+            'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+            'save table contextmenu directionality emoticons template paste textcolor'
+        ],
     });
+    
 </script>
 <script type="text/javascript">
     $(document).ready(function() {
-
+        articleUpload();
+  
     });
 </script>
 
@@ -16,7 +25,7 @@
         <p class="bd_title">编辑文章</p>
     </div>
     <div class="col-md-6">
-        <p class="text-right"><a href="<?php echo B_URL; ?>article/index" class="white">返回列表</a></p>
+        <p class="text-right"><a href="<?php echo B_URL; ?>article/index">返回列表</a></p>
     </div>
 </div>
 
@@ -105,10 +114,34 @@
                 <?php echo $this->backend_lib->formError('content'); ?>
             </div>
             
+            <div class="form-group">
+                <h5>附件列表</h5>
+                <ul class="list-group" id="attachList">
+                <?php if ($attachs != null) : ?>
+                    <?php foreach ($attachs as $attach) : ?>
+                        <li class="list-group-item">
+                            <?php if ($attach['setInput']) : ?><input type="hidden" name="attachId[]" value="<?php echo $attach['id']; ?>" /><?php endif; ?>
+                            <a href="/<?php echo $attach['path']; ?>" target="_blank" class="bd_attach_img"><img src="/<?php echo cc_get_img_path($attach['path'], 'thumb'); ?>" class="img-thumbnail" alt="<?php echo $attach['orig_name']; ?>"></a> 
+                            <a onclick="return attachInsertEditor(this)" href="/<?php echo $attach['path']; ?>">插入文章</a>&nbsp;&nbsp;
+                            <a onclick="return setCoverPic(this);" href="<?php echo $attach['path']; ?>">设为封面</a>&nbsp;&nbsp;
+                            <a onclick="return attachInsertEditor(this);" href="/<?php echo cc_get_img_path($attach['path'], 'thumb'); ?>">插入缩略图</a>&nbsp;&nbsp;
+                            <a onclick="return setCoverPic(this);" href="<?php echo cc_get_img_path($attach['path'], 'thumb'); ?>">封面缩略图</a>&nbsp;&nbsp;
+                            <a onclick="return deleteAttach(this);" href="<?php echo $attach['id']; ?>">删除</a>
+                        </li>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                </ul>
+                
+                <label for="inputFile">图片上传</label>
+                <input type="file" id="inputFile"> <a class="btn btn-default" href="#" role="button" id="buttonUpload">上传</a>
+                <span id="helpBlock" class="help-block">支持.jpg .png</span>
+                <p class="bg-warning" id="attachMessage"></p>
+            </div>
+            
             <div class="form-group<?php if (form_error('post_time')) : ?> has-error<?php endif; ?>">
                 <label for="input_post_time" class="control-label">发布时间</label>
                 <input type="text" name="post_time" id="input_post_time" class="form-control" aria-describedby="helpBlock" value="<?php echo $this->backend_lib->getValue(set_value('post_time'), $row['post_time']); ?>">
-                <span id="helpBlock" class="help-block"></span>
+                <span id="helpBlock" class="help-block">2015-01-01 08:10:01</span>
                 <?php echo $this->backend_lib->formError('post_time'); ?>
             </div>
 
@@ -127,48 +160,10 @@
 
             <input name="save" type="hidden" value="1" />
             <input name="id" type="hidden" value="<?php echo $this->backend_lib->getValue(set_value('id'), $row['id']); ?>" />
-            <input class="btn btn-default" type="submit" value="保存">
+            <input class="btn btn-primary" type="submit" value="保存">
         </form>
         <p>&nbsp;</p>
     </div>
 </div>
-
-<!--<tr>
-    <th>内容:</th>
-    <td>
-        <textarea id="editor_id" name="content"><?php echo $this->backend_lib->getValue(set_value('content'), $row['content']); ?></textarea>
-        <?php echo form_error('content'); ?>
-    </td>
-    <td></td>
-</tr>
-<tr>
-    <th>上传附件:</th>
-    <td>
-        <div class="uploadAttach">
-            附件列表: 
-            <ul id="uploadAttach">
-                <?php if ($attachs != null) : ?>
-                    <?php foreach ($attachs as $attach) : ?>
-                        <li>
-                            <?php if ($attach['setInput']) : ?><input type="hidden" name="attachId[]" value="<?php echo $attach['id']; ?>" /><?php endif; ?>
-                            <a target="_blank" href="<?php echo base_url() . $attach['path']; ?>"><?php echo $attach['orig_name']; ?></a>
-                            <a onclick="return attachInsertEditor(this)" href="<?php echo base_url() . $attach['path']; ?>">插入文章</a>
-                            <a onclick="return setCoverPic(this);" href="<?php echo $attach['path']; ?>">设为封面</a>
-                            <a onclick="return insertImgToDesc(this);" href="<?php echo $attach['path']; ?>">插入描述</a>
-                            |&nbsp;<a target="_blank" href="<?php echo base_url() . cg_get_img_path($attach['path'], 'thumb'); ?>">缩略图</a>
-                            <a onclick="return attachInsertEditor(this);" href="<?php echo base_url() . cg_get_img_path($attach['path'], 'thumb'); ?>">插入缩略图</a>
-                            <a onclick="return setCoverPic(this);" href="<?php echo cg_get_img_path($attach['path'], 'thumb'); ?>">缩略图设为封面</a>
-                            <a onclick="return insertImgToDesc(this);" href="<?php echo cg_get_img_path($attach['path'], 'thumb'); ?>">缩略图插入描述</a>
-                            <a onclick="return deleteAttach(this);" href="<?php echo $attach['id']; ?>">删除</a>
-                        </li>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </ul>
-        </div>
-        <div id="attachMessage" class="errorMessage" style="display:none; width: 70%; margin-left: 0px;"></div>
-        <iframe src="<?php echo B_URL; ?>attach/upload" width="420" height="100" frameborder="0" scrolling="no" id="iframeContentAttach" ></iframe>
-    </td>
-    <td></td>
-</tr>-->
 
 <?php $this->load->view('backend/_footer'); ?>

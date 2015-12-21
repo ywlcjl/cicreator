@@ -72,3 +72,82 @@ function searchForm() {
         return false;
     });
 }
+
+function attachInsertEditor(obj) {
+    var imgUrl = $(obj).attr('href');
+    tinymce.activeEditor.insertContent('<img src="' + imgUrl + '" >');
+    return false;
+}
+
+function setCoverPic(obj) {
+    var imgUrl = $(obj).attr('href');
+    $('#input_cover_pic').val(imgUrl);
+    return false;
+}
+
+function deleteAttach(obj) {
+    var result = confirm('确认删除吗?');
+    if (result) {
+        var id = $(obj).attr('href');
+
+        $.post(B_URL + "attach/ajaxDelete", {
+            'id': id
+        }, function (data, textStatus) {
+            var message = data.message;
+            var success = data.success;
+
+            $('#attachMessage').html(message);
+
+            if (success > 0) {
+                $(obj).parent().remove();
+            }
+        }, "json");
+    }
+
+    return false;
+}
+
+function articleUpload() {
+    $('#buttonUpload').click(function () {
+        var formData;
+        formData = new FormData();
+        formData.append('post', 1);
+        formData.append('userfile', $("#inputFile").get(0).files[0]);
+
+        $.ajax({
+            url: '/backend/attach/ajaxUpload',
+            data: formData,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            dataType: 'json',
+            success: function (data) {
+                if (data.success) {
+                    $("#inputFile").val("");
+                    $("#attachMessage").html("");
+
+                    var str = '<li class="list-group-item">';
+                    str += '<input type="hidden" name="attachId[]" value="' + data.attachId + '">';
+                    str += '<a href="/' + data.picUrl + '" target="_blank" class="bd_attach_img"><img src="/' + data.picUrlThumb + '" class="img-thumbnail" alt="' + data.result.orig_name + '"></a> ';
+                    str += '<a href="/' + data.picUrl + '" onclick="return attachInsertEditor(this)">插入文章</a>&nbsp;&nbsp;';
+                    str += '<a href="' + data.picUrl + '" onclick="return setCoverPic(this);">设为封面</a>&nbsp;&nbsp;';
+                    str += '<a href="/' + data.picUrlThumb + '" onclick="return attachInsertEditor(this)">插入缩略图</a>&nbsp;&nbsp;';
+                    str += '<a href="' + data.picUrlThumb + '" onclick="return setCoverPic(this);">封面缩略图</a>&nbsp;&nbsp;';
+                    str += '<a href="' + data.attachId + '" onclick="return deleteAttach(this);">删除</a>';
+                    str += '</li>';
+
+                    $("#attachList").append(str);
+
+                } else {
+                    $("#attachMessage").html(data.message);
+                }
+
+            },
+            error: function (data) {
+                $("#attachMessage").html("ajax error");
+            }
+        });
+
+        return false;
+    });
+}

@@ -14,13 +14,4 @@ class Attach_model extends Base_model {
         $this->tableName = $this->_name;
     }
 
-    public function getType($key='') {
-        $data = array(png => 'png', jpg => 'jpg', jpe => 'jpe', jpeg => 'jpeg', gif => 'gif', );
-
-        if ($key !== '') {
-            return $data[$key];
-        } else {
-            return $data;
-        }
-    }
 }

@@ -10,7 +10,7 @@
         <p class="bd_title">权限分配</p>
     </div>
     <div class="col-md-6">
-        <p class="text-right"><a href="<?php echo B_URL; ?>admin/index" class="white">返回列表</a></p>
+        <p class="text-right"><a href="<?php echo B_URL; ?>admin/index">返回列表</a></p>
     </div>
 </div>
 
@@ -38,7 +38,7 @@
 
             <input name="id" type="hidden" value="<?php echo $this->backend_lib->getValue(set_value('id'), $admin['id']); ?>" />
             <input name="add" type="hidden" value="1" />
-            <input class="btn btn-default" type="submit" value="保存" />
+            <input class="btn btn-primary" type="submit" value="保存" />
         </form>
         <p>&nbsp;</p>
     </div>
