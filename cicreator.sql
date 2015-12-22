@@ -9,7 +9,7 @@
  Target Server Version : 50538
  File Encoding         : utf-8
 
- Date: 12/21/2015 17:31:21 PM
+ Date: 12/22/2015 15:10:03 PM
 */
 
 SET NAMES utf8;
@@ -30,13 +30,13 @@ CREATE TABLE `admin` (
   `update_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Records of `admin`
 -- ----------------------------
 BEGIN;
-INSERT INTO `admin` VALUES ('1', 'admin', '21232f297a57a5a743894a0e4a801fc3', '1', '1|2', '1', '2015-12-21 12:46:55', '2015-08-22 21:37:31', '2014-08-10 15:49:21'), ('2', 'ywlcjl', '4d24c6126e9e208f42fb2cfc480dfdb9', '0', '1|2', '1', '2015-12-16 12:30:02', '2015-09-01 18:30:06', '2015-09-01 18:29:57');
+INSERT INTO `admin` VALUES ('1', 'admin', '21232f297a57a5a743894a0e4a801fc3', '1', '1|2', '1', '2015-12-21 18:59:03', '2015-08-22 21:37:31', '2014-08-10 15:49:21');
 COMMIT;
 
 -- ----------------------------
