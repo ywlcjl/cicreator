@@ -3,7 +3,7 @@
 	<h1>欢迎使用 CICreator v<?php echo CC_VERSION; ?></h1>
 
 	<div id="body">
-            <p>CICreator一个基于CodeIgniter 2 和 Bootstrap 3开发的网站后台系统. &nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo B_URL; ?>" target="_blank">进入后台</a> (用户admin,密码admin)</p>
+            <p>CICreator一个基于CodeIgniter 3 和 Bootstrap 3开发的网站后台系统. &nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo B_URL; ?>" target="_blank">进入后台</a> (用户admin,密码admin)</p>
             <p><b>特色功能:</b> 自动生成代码: 一个能够根据数据表的配置自动生成对应的model, controller, view的等后台文件, 节省开发的时间.</p>
             <p><b>基础功能:</b> CMS内容管理系统功能包括: 管理员, 权限, 文章分类, 文章, 文章附件, 系统设置等.</p>
             <p>&nbsp;</p>

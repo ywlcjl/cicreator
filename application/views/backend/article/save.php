@@ -1,5 +1,5 @@
 <?php $this->load->view('backend/_header', array('onView' => 'article')); ?>
-<script type="text/javascript" src='<?php echo base_url(); ?>plugins/tinymce/tinymce.min.js'></script>
+<script type="text/javascript" src='/plugins/tinymce/tinymce.min.js'></script>
 <script>
     tinymce.init({
         selector: '#editor_id',

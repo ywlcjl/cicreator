@@ -35,8 +35,8 @@
                 <label for="input_captcha" class="control-label">验证码</label>
                 <input type="text" name="captcha" id="input_captcha" class="form-control" aria-describedby="helpBlock" value="">
                 <span id="helpBlock" class="help-block">
-                    <img src="<?php echo base_url(); ?>plugins/cool-php-captcha/captcha.php" id="captcha" align="absmiddle" /> 
-                    <a href="#" onclick="document.getElementById('captcha').src='<?php echo base_url(); ?>plugins/cool-php-captcha/captcha.php?'+Math.random();document.getElementById('captcha-form').focus();" id="change-image">换一张?</a>
+                    <img src="/plugins/cool-php-captcha/captcha.php" id="captcha" align="absmiddle" /> 
+                    <a href="#" onclick="document.getElementById('captcha').src='/plugins/cool-php-captcha/captcha.php?'+Math.random();document.getElementById('captcha-form').focus();" id="change-image">换一张?</a>
                 </span>
                 <?php echo $this->backend_lib->formError('captcha'); ?>
             </div>
