@@ -79,7 +79,8 @@ $db['default'] = array(
 	'username' => 'cicreator',
 	'password' => 'password',
 	'database' => 'cicreator',
-	'dbdriver' => 'mysqli',
+	//'dbdriver' => 'mysqli', //~cc
+	'dbdriver' => 'mysql',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
 	'db_debug' => (ENVIRONMENT !== 'production'),
