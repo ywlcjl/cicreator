@@ -1,4 +1,13 @@
 ###################
+What is CICreator
+###################
+
+CICreator is a backend website based on CodeIgniter 3 and Bootstrap 3. It is can help
+you generate code for model, controller, view... with you desgined mysql
+table. But now language is zh_CN
+
+
+###################
 What is CodeIgniter
 ###################
 
