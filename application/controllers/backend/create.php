@@ -162,8 +162,8 @@ class Create extends CI_Controller {
 
     private function _getFiles($tableName) {
         $files = array(
-            'model' => APP_DIR . '/models/' . strtolower($tableName) . '_model.php',
-            'controller' => APP_DIR . '/controllers/' . BACKEND . '/' . strtolower($tableName) . '.php',
+            'model' => APP_DIR . '/models/' . ucfirst(strtolower($tableName)) . '_model.php',
+            'controller' => APP_DIR . '/controllers/' . BACKEND . '/' . ucfirst(strtolower($tableName)) . '.php',
             'view_index' => APP_DIR . '/views/' . BACKEND . '/' . strtolower($tableName) . '/' . 'index.php',
             'view_save' => APP_DIR . '/views/' . BACKEND . '/' . strtolower($tableName) . '/' . 'save.php',
         );
