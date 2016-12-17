@@ -948,7 +948,7 @@ sss;
                     $idStr = substr($column['COLUMN_COMMENT'], 4);
                     $str .= <<<sss
                     <div class="form-group">
-                        <label for="search_category">{$column['COLUMN_NAME']}</label>
+                        <label for="search_{$column['COLUMN_NAME']}">{$column['COLUMN_NAME']}</label>
                         <select name="{$column['COLUMN_NAME']}" class="form-control" id="search_{$column['COLUMN_NAME']}">
                             <option value="">请选择</option>
                             <?php if (\${$idStr}s != null) : ?>
@@ -969,7 +969,7 @@ sss;
                     if ($statuss) {
                         $str .= <<<sss
                     <div class="form-group">
-                        <label for="search_status">{$column['COLUMN_NAME']}</label>
+                        <label for="search_{$column['COLUMN_NAME']}">{$column['COLUMN_NAME']}</label>
                         <select name="{$column['COLUMN_NAME']}" class="form-control" id="search_{$column['COLUMN_NAME']}">
                             <option value="">请选择</option>
                             <?php if (\${$column['COLUMN_NAME']}s != null) : ?>
@@ -1010,7 +1010,7 @@ sss;
                     //普通的数字
                     $str .= <<<sss
                     <div class="form-group">
-                        <label for="search_id">{$column['COLUMN_NAME']}</label>
+                        <label for="search_{$column['COLUMN_NAME']}">{$column['COLUMN_NAME']}</label>
                         <input type="text" name="{$column['COLUMN_NAME']}" class="form-control" id="search_{$column['COLUMN_NAME']}" value="<?php echo \${$column['COLUMN_NAME']}; ?>">
                     </div>
 
