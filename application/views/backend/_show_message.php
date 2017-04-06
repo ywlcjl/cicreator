@@ -1,4 +1,6 @@
-<?php $this->load->view('backend/_header'); ?>
+<?php $this->load->view('backend/_header', array(
+    'title' => '信息提示',
+)); ?>
 <script type="text/javascript">
     $(document).ready(function() {
         toMessage();

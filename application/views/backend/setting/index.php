@@ -1,4 +1,7 @@
-<?php $this->load->view('backend/_header', array('onView' => 'setting')); ?>
+<?php $this->load->view('backend/_header', array(
+    'title' => '设置列表',
+    'onView' => 'setting'
+)); ?>
 <script type="text/javascript">
     $(document).ready(function () {
     });

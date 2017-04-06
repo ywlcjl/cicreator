@@ -1,4 +1,8 @@
-<?php $this->load->view('backend/_header', array('onView' => 'home')); ?>
+<?php $this->load->view('backend/_header', array(
+    'title' => 'CiCreator网站后台',
+    'onView' => 'home',
+    'notShowName' => 1,
+)); ?>
 <div class="row">
     <div class="col-md-12">
         <p class="bd_title">控制台</p>

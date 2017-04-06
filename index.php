@@ -40,7 +40,7 @@
 session_start();
 
 //CICreator version
-define('CC_VERSION', '1.4.0');
+define('CC_VERSION', '1.5.0');
 
 //设置默认时间 ~cc
 date_default_timezone_set('Asia/Shanghai');

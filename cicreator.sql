@@ -123,18 +123,33 @@ CREATE TABLE `attach` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+--  Table structure for `cron_log`
+-- ----------------------------
+DROP TABLE IF EXISTS `cron_log`;
+CREATE TABLE `cron_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` tinyint(4) DEFAULT '0' COMMENT '类型$array$0:未分类|1:默认',
+  `memo` varchar(255) DEFAULT '' COMMENT '日志',
+  `admin_id` int(11) DEFAULT '0' COMMENT '管理员ID$id$admin',
+  `status` tinyint(4) DEFAULT '0' COMMENT '状态$array$0:待审核|1:已启用|2:已作废',
+  `update_time` datetime DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
 --  Table structure for `example`
 -- ----------------------------
 DROP TABLE IF EXISTS `example`;
 CREATE TABLE `example` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL DEFAULT '',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '名称',
   `desc_txt` text,
-  `price` float NOT NULL DEFAULT '0' COMMENT '$max$',
-  `article_category` int(11) NOT NULL DEFAULT '0' COMMENT '$id$article',
-  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '$array$0:停用|1:启用',
+  `price` float NOT NULL DEFAULT '0' COMMENT '价格$max$',
+  `article_category` int(11) NOT NULL DEFAULT '0' COMMENT '文章ID$id$article',
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态$array$0:停用|1:启用',
   `post_time` date NOT NULL DEFAULT '0000-00-00',
-  `update_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `update_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

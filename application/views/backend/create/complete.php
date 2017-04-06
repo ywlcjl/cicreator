@@ -1,4 +1,7 @@
-<?php $this->load->view('backend/_header', array('onView' => 'create')); ?>
+<?php $this->load->view('backend/_header', array(
+    'title' => '自动生成代码完成',
+    'onView' => 'create'
+)); ?>
 <script type="text/javascript">
     $(document).ready(function() {
     });

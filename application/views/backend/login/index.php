@@ -1,4 +1,6 @@
-<?php $this->load->view('backend/_header'); ?>
+<?php $this->load->view('backend/_header', array(
+        'title' => '登陆',
+)); ?>
 <div class="row">
     <div class="col-md-6">
         <p class="bd_title">后台登录</p>
@@ -19,26 +21,25 @@
         <form action="<?php echo B_URL; ?>login/signIn" method="post">
             <div class="form-group<?php if (form_error('username')) : ?> has-error<?php endif; ?>">
                 <label for="input_username" class="control-label">用户</label>
-                <input type="text" name="username" id="input_username" class="form-control" aria-describedby="helpBlock" value="<?php echo $this->backend_lib->getValue(set_value('username'), $row['username']); ?>">
-                <span id="helpBlock" class="help-block"></span>
-                <?php echo $this->backend_lib->formError('username'); ?>
+                <input type="text" name="username" id="input_username" class="form-control" aria-describedby="helpBlock" value="<?php echo cc_get_value(set_value('username'), $row['username']); ?>">
+                <span id="helpBlock" class="help-block"><?php echo form_error('username'); ?></span>
             </div>
 
             <div class="form-group<?php if (form_error('password')) : ?> has-error<?php endif; ?>">
                 <label for="input_password" class="control-label">密码</label>
                 <input type="password" name="password" id="input_password" class="form-control" aria-describedby="helpBlock" value="">
-                <span id="helpBlock" class="help-block"></span>
-                <?php echo $this->backend_lib->formError('password'); ?>
+                <span id="helpBlock" class="help-block"><?php echo form_error('password'); ?></span>
             </div>
                         
             <div class="form-group<?php if (form_error('captcha') || $captchaError) : ?> has-error<?php endif; ?>">
                 <label for="input_captcha" class="control-label">验证码</label>
                 <input type="text" name="captcha" id="input_captcha" class="form-control" aria-describedby="helpBlock" value="">
-                <span id="helpBlock" class="help-block">
+                <span id="helpBlock" class="help-block"><?php echo form_error('captcha'); ?></span>
+                <span>
                     <img src="/plugins/cool-php-captcha/captcha.php" id="captcha" align="absmiddle" /> 
                     <a href="#" onclick="document.getElementById('captcha').src='/plugins/cool-php-captcha/captcha.php?'+Math.random();document.getElementById('captcha-form').focus();" id="change-image">换一张?</a>
                 </span>
-                <?php echo $this->backend_lib->formError('captcha'); ?>
+                
             </div>
 
             <input name="login" type="hidden" value="1" />

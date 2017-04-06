@@ -1,4 +1,7 @@
-<?php $this->load->view('backend/_header', array('onView' => 'admin')); ?>
+<?php $this->load->view('backend/_header', array(
+    'title' => '权限分配',
+    'onView' => 'admin'
+)); ?>
 <script type="text/javascript">
     $(document).ready(function () {
     });
@@ -36,7 +39,7 @@
                 </div>
             <?php endif; ?>
 
-            <input name="id" type="hidden" value="<?php echo $this->backend_lib->getValue(set_value('id'), $admin['id']); ?>" />
+            <input name="id" type="hidden" value="<?php echo cc_get_value(set_value('id'), $admin['id']); ?>" />
             <input name="add" type="hidden" value="1" />
             <input class="btn btn-primary" type="submit" value="保存" />
         </form>

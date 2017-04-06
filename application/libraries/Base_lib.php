@@ -51,13 +51,14 @@ class Base_lib {
      * @return type
      */
     public function getUploadDir($dirName) {
+        $uploadDir = 'uploads';
         $year = date('Y');
         $month = date('m');
         $day = date('d');
 
-        $path = "uploads/$dirName/$year/$month/$day/";
-        $pathYear = "uploads/$dirName/$year/";
-        $pathMonth = "uploads/$dirName/$year/$month/";
+        $path = "$uploadDir/$dirName/$year/$month/$day/";
+        $pathYear = "$uploadDir/$dirName/$year/";
+        $pathMonth = "$uploadDir/$dirName/$year/$month/";
 
         if (!is_dir($pathYear)) {
             mkdir($pathYear, 0777);
@@ -74,6 +75,11 @@ class Base_lib {
         return $path;
     }
     
+    /**
+     * 获取设置
+     * @param type $key
+     * @return type
+     */
     public function getSetting($key='') {
         $this->_CI->load->model('setting_model');
         
@@ -88,6 +94,23 @@ class Base_lib {
         }
         
         return $result;
+    }
+    
+    /*
+     * 系统日志
+     */
+    public function cronLog($type, $log) {
+        $this->_CI->load->model('cron_log_model');
+        
+        $param = array(
+            'type' => $type,
+            'memo' => $log,
+            'status' => 1,
+            'admin_id' => $_SESSION['adminId'],
+        );
+        
+        $this->_CI->cron_log_model->save($param);
+        
     }
     
 }

@@ -135,7 +135,7 @@ class Backend_lib extends Base_lib {
 
         if ($setValue !== '') {
             $result = $setValue;
-        } elseif ($rowVaule != '') {
+        } elseif ($rowVaule !== '') {
             $result = $rowVaule;
         } else {
             $result = $defaultValue;
@@ -144,13 +144,31 @@ class Backend_lib extends Base_lib {
         return $result;
     }
     
+    public function getGetStr() {
+        $urlGet = '';
+        $gets = $this->_CI->input->get();
+        if($gets) {
+            $i = 0;
+            foreach($gets as $getKey=>$get) {
+                if($i) {
+                    $urlGet .= "&$getKey=$get";
+                } else {
+                    $urlGet .= "/?$getKey=$get";
+                }
+                $i++;
+            }
+        }
+        return $urlGet;
+    }
+
+
     /**
      * CI辅助错误输出
      * @param type $fieldName
      * @return type
      */
-    public function formError($fieldName) {
-        return form_error($fieldName, '<p class="text-danger">', '</p>');
-    }
+//    public function formError($fieldName) {
+//        return form_error($fieldName, '<p class="text-danger">', '</p>');
+//    }
 
 }

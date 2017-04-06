@@ -8,6 +8,9 @@ if (!defined('BASEPATH'))
  */
 class Create extends CI_Controller {
 
+    //代码生成特殊魔法字符
+    protected $_magicStr = array('$id$', '$array$', '$max$');
+    
     public function __construct() {
         parent::__construct();
         $this->load->library('backend_lib');
@@ -37,19 +40,7 @@ class Create extends CI_Controller {
                 $message = '表单填写有误';
             } else {
                 //查询数据
-                $dbInformation = 'information_schema';
-                $infTable = 'COLUMNS';
-                $dbName = $this->db->database;
-
-                //连接数据库
-                $dbh = new PDO($this->db->dbdriver . ':host=' . $this->db->hostname . ';dbname=' . $dbInformation, $this->db->username, $this->db->password);
-                $dbh->query("SET NAMES 'UTF8'");
-
-                $sql = "SELECT `COLUMN_NAME`, `DATA_TYPE`,`CHARACTER_MAXIMUM_LENGTH`, `COLUMN_TYPE`, `COLUMN_COMMENT` FROM $infTable WHERE `TABLE_SCHEMA`='$dbName' AND `TABLE_NAME`='$tableName'";
-
-                $sth = $dbh->prepare($sql);
-                $sth->execute();
-                $result = $sth->fetchAll();
+                $result = $this->_getTableFields($tableName);
 
                 if ($result) {
                     $message = '提交成功';
@@ -97,19 +88,7 @@ class Create extends CI_Controller {
                 $message = '表单填写有误';
             } else {
                 //查询数据
-                $dbInformation = 'information_schema';
-                $infTable = 'COLUMNS';
-                $dbName = $this->db->database;
-
-                //连接数据库
-                $dbh = new PDO($this->db->dbdriver . ':host=' . $this->db->hostname . ';dbname=' . $dbInformation, $this->db->username, $this->db->password);
-                $dbh->query("SET NAMES 'UTF8'");
-
-                $sql = "SELECT `COLUMN_NAME`, `DATA_TYPE`,`CHARACTER_MAXIMUM_LENGTH`, `COLUMN_TYPE`, `COLUMN_COMMENT` FROM $infTable WHERE `TABLE_SCHEMA`='$dbName' AND `TABLE_NAME`='$tableName'";
-
-                $sth = $dbh->prepare($sql);
-                $sth->execute();
-                $result = $sth->fetchAll();
+                $result = $this->_getTableFields($tableName);
 
                 if ($result) {
                     $message = '提交成功';
@@ -172,8 +151,9 @@ class Create extends CI_Controller {
 
     private function _getArrays($str) {
         $statuss = array();
-        if (stripos($str, '$array$') !== FALSE) {
-            $commentStr = substr($str, 7);
+        $start = stripos($str, '$array$');
+        if ($start !== FALSE) {
+            $commentStr = substr($str, $start+7); //+7 $array$
             if ($commentStr) {
                 $arrayT = explode('|', $commentStr);
                 if ($arrayT) {
@@ -218,7 +198,7 @@ model;
                     //获取状态选项的的处理
                     $statuss = $this->_getArrays($column['COLUMN_COMMENT']);
 
-                    $firstColumnName = ucfirst($column['COLUMN_NAME']);
+                    $firstColumnName = $this->_getCamelClassName($column['COLUMN_NAME']);
 
                     //生成代码
                     if ($statuss) {
@@ -292,9 +272,10 @@ sss;
         //是否存在关联id代码
         if ($columns && is_array($columns)) {
             foreach ($columns as $column) {
-                if ($column['COLUMN_COMMENT'] && stripos($column['COLUMN_COMMENT'], '$id$') !== FALSE) {
+                $start = stripos($column['COLUMN_COMMENT'], '$id$');
+                if ($column['COLUMN_COMMENT'] && $start !== FALSE) {
                     //获取关联id选项的的处理
-                    $idStr = substr($column['COLUMN_COMMENT'], 4);
+                    $idStr = substr($column['COLUMN_COMMENT'], $start+4);
 
                     //生成代码
                     $str .= <<<sss
@@ -316,8 +297,7 @@ sss;
     public function index() {
         \$data = array();
         \$param = array();
-        \$inParams = array();
-        \$likeParam = array();
+        \$orParam = array();
 
 
 sss;
@@ -325,13 +305,15 @@ sss;
         //是否存在选项代码
         if ($columns && is_array($columns)) {
             foreach ($columns as $column) {
-                if ($column['COLUMN_COMMENT'] && stripos($column['COLUMN_COMMENT'], '$id$') !== FALSE) {
+                $start = stripos($column['COLUMN_COMMENT'], '$id$');
+                if ($column['COLUMN_COMMENT'] && $start !== FALSE) {
                     //关联id处理
-                    $idStr = substr($column['COLUMN_COMMENT'], 4);
+                    $idStr = substr($column['COLUMN_COMMENT'], $start+4);
+                    $idStrTuo = cc_get_camel_str($idStr);
 
                     //关联id
                     $str .= <<<sss
-        \$data['{$idStr}s'] = \$this->{$idStr}_model->getResult(array(), '', '', 'id DESC');
+        \$data['{$idStrTuo}s'] = \$this->{$idStr}_model->getResult(array(), '', '', 'id DESC');
 
 sss;
                 } elseif ($column['COLUMN_COMMENT']) {
@@ -339,11 +321,13 @@ sss;
                     $statuss = $this->_getArrays($column['COLUMN_COMMENT']);
 
                     $firstColumnName = ucfirst($column['COLUMN_NAME']);
-
+                    $firstColumnNameTuo = cc_get_camel_str($column['COLUMN_NAME']);
+                    $firstColumnNameClass = $this->_getCamelClassName($column['COLUMN_NAME']);
+                    
                     //生成代码
                     if ($statuss) {
                         $str .= <<<sss
-        \$data['{$column['COLUMN_NAME']}s'] = \$this->{$modelName}->get{$firstColumnName}();
+        \$data['{$firstColumnNameTuo}s'] = \$this->{$modelName}->get{$firstColumnNameClass}();
 
 sss;
                     }
@@ -368,12 +352,12 @@ sss;
                     $str .= <<<sss
             \$data['{$column['COLUMN_NAME']}'] = \$this->input->get('{$column['COLUMN_NAME']}', TRUE);
             if(\$data['{$column['COLUMN_NAME']}']) {
-                \$likeParam['{$column['COLUMN_NAME']}'] = \$data['{$column['COLUMN_NAME']}'];
+                \$param['{$column['COLUMN_NAME']} like'] = \$data['{$column['COLUMN_NAME']}'];
             }
 
 
 sss;
-                } elseif (in_array($column['DATA_TYPE'], array('datetime', 'timestamp'))) {
+                } elseif (in_array($column['DATA_TYPE'], array('datetime', 'timestamp', 'date'))) {
                     //日期时间
                     $str .= <<<sss
             \$data['{$column['COLUMN_NAME']}_start'] = \$this->input->get('{$column['COLUMN_NAME']}_start', TRUE);
@@ -385,8 +369,10 @@ sss;
 
 
 sss;
-                } else if ($column['COLUMN_COMMENT'] == '$max$' && in_array($column['DATA_TYPE'], array('int', 'tinyint', 'smallint', 'mediumint', 'bigint', 'float', 'double', 'decimal'))) {
+                } else if (stripos($column['COLUMN_COMMENT'], '$max$') !== false && in_array($column['DATA_TYPE'], array('int', 'tinyint', 'smallint', 'mediumint', 'bigint', 'float', 'double', 'decimal'))) {
                     //大小于号生成
+                    $start = stripos($column['COLUMN_COMMENT'], '$max$');
+                    
                     $str .= <<<sss
             \$data['{$column['COLUMN_NAME']}_min'] = \$this->input->get('{$column['COLUMN_NAME']}_min', TRUE);
             if (\$data['{$column['COLUMN_NAME']}_min'] !== '') {
@@ -416,56 +402,22 @@ sss;
 
 
         $str .= <<<sss
-}
+        }
 
         //自动获取get参数
-        \$urlGet = '';
-        \$gets = \$this->input->get();
-        if (\$gets) {
-            \$i = 0;
-            foreach (\$gets as \$getKey => \$get) {
-                if (\$i) {
-                    \$urlGet .= "&\$getKey=\$get";
-                } else {
-                    \$urlGet .= "/?\$getKey=\$get";
-                }
-                \$i++;
-            }
-        }
-                
-        //排序
-        \$orderBy = \$this->input->get('orderBy', TRUE);
-        \$orderBySQL = 'id DESC';
-        if (\$orderBy == 'idASC') {
-            \$orderBySQL = 'id ASC';
-        }
-        \$data['orderBy'] = \$orderBy;
-                
+        \$urlGet = \$this->backend_lib->getGetStr();
+
         //分页参数
-        \$pageUrl = B_URL.'$tableName/index';  //分页链接
-        \$pageUri = 4;   //URL参数位置
-        \$pagePer = 20;  //每页数量
-        \$suffix = \$urlGet;   //GET参数
-        //计算分页起始条目
-        \$pageNum = intval(\$this->uri->segment(\$pageUri)) ? intval(\$this->uri->segment(\$pageUri)) : 1;
-        \$startRow = (\$pageNum - 1) * \$pagePer;
-
-        //获取数据
-        \$result = \$this->{$modelName}->getResult(\$param, \$pagePer, \$startRow, \$orderBySQL, \$inParams, \$likeParam);
-
-        //生成分页链接
-        \$total = \$this->{$modelName}->count(\$param, \$inParams, \$likeParam);
-        \$this->backend_lib->createPage(\$pageUrl, \$pageUri, \$pagePer, \$total, \$suffix);  //创建分页链接
-        //获取联表结果
-        if (\$result) {
-            foreach (\$result as \$key => \$value) {
-
-            }
-        }
-
+        \$pageUrl = B_URL.'{$tableName}/index';
+        \$pagePer = 20;
+        \$suffix = \$urlGet;
+        
+        //分页数据
+        \$result = \$this->{$modelName}->getPage(\$pageUrl, \$pagePer, \$suffix, \$param, 'id DESC');
+        
         \$data['result'] = \$result;
 
-        \$this->load->view('backend/$tableName/index', \$data);
+        \$this->load->view('backend/{$tableName}/index', \$data);
     }
 
 
@@ -480,24 +432,28 @@ sss;
         //处理status
         if ($columns && is_array($columns)) {
             foreach ($columns as $column) {
-                if ($column['COLUMN_COMMENT'] && stripos($column['COLUMN_COMMENT'], '$id$') !== FALSE) {
+                $start = stripos($column['COLUMN_COMMENT'], '$id$');
+                if ($column['COLUMN_COMMENT'] && $start !== FALSE) {
                     //关联id处理
-                    $idStr = substr($column['COLUMN_COMMENT'], 4);
-
+                    $idStr = substr($column['COLUMN_COMMENT'], $start+4); //+4 $id$
+                    $idStrTuo = cc_get_camel_str($idStr);
+                    
                     //关联id
                     $str .= <<<sss
-        \$data['{$idStr}s'] = \$this->{$idStr}_model->getResult(array(), '', '', 'id DESC');
+        \$data['{$idStrTuo}s'] = \$this->{$idStr}_model->getResult(array(), '', '', 'id DESC');
 
 sss;
                 } elseif ($column['COLUMN_COMMENT']) {
                     //获取状态选项的的处理
                     $statuss = $this->_getArrays($column['COLUMN_COMMENT']);
                     $firstColumnName = ucfirst($column['COLUMN_NAME']);
-
+                    $firstColumnNameTuo = cc_get_camel_str($column['COLUMN_NAME']);
+                    $firstColumnNameClass = $this->_getCamelClassName($column['COLUMN_NAME']);
+                    
                     //生成代码
                     if ($statuss) {
                         $str .= <<<sss
-        \$data['{$column['COLUMN_NAME']}s'] = \$this->{$modelName}->get{$firstColumnName}();
+        \$data['{$firstColumnNameTuo}s'] = \$this->{$modelName}->get{$firstColumnNameClass}();
 
 sss;
                     }
@@ -623,7 +579,8 @@ sss;
         //处理状态
         if ($columns && is_array($columns)) {
             foreach ($columns as $column) {
-                if ($column['COLUMN_COMMENT'] && stripos($column['COLUMN_COMMENT'], '$id$') !== FALSE) {
+                $start = stripos($column['COLUMN_COMMENT'], '$id$');
+                if ($column['COLUMN_COMMENT'] && $start !== FALSE) {
 
                     //关联id
                     $str .= <<<sss
@@ -690,11 +647,14 @@ sss;
     
     private function _getViewIndexStr($tableName, $columns) {
         //驼峰命名
-        $tTableName = cc_get_hump_str($tableName);
+        $tTableName = cc_get_camel_str($tableName);
 
                 
         $str = <<<sss
-<?php \$this->load->view('backend/_header', array('onView' => '$tTableName')); ?>
+<?php \$this->load->view('backend/_header', array(
+    'title' => '{$tableName}列表',
+    'onView' => '$tTableName',
+)); ?>
 <script type="text/javascript">
     $(document).ready(function() {
         //表单全选
@@ -721,7 +681,8 @@ sss;
         //处理状态
         if ($columns && is_array($columns)) {
             foreach ($columns as $column) {
-                if ($column['COLUMN_COMMENT'] && stripos($column['COLUMN_COMMENT'], '$id$') !== FALSE) {
+                $start = stripos($column['COLUMN_COMMENT'], '$id$');
+                if ($column['COLUMN_COMMENT'] && $start !== FALSE) {
 
                     //关联id
                     $str .= <<<sss
@@ -782,8 +743,14 @@ sss;
         //表格头部
         if ($columns && is_array($columns)) {
             foreach ($columns as $column) {
+                //获取中文名称
+                $columnCnName = $this->_getCommentStr($column['COLUMN_COMMENT']);
+                if (!$columnCnName) {
+                    $columnCnName = $column['COLUMN_NAME'];
+                }
+                
                 $str .= <<<sss
-                            <th>{$column['COLUMN_NAME']}</th>
+                            <th>{$columnCnName}</th>
 
 sss;
             }
@@ -813,9 +780,10 @@ sss;
 
 sss;
                 } elseif($column['COLUMN_COMMENT'] &&  stripos($column['COLUMN_COMMENT'], '$array$') !== FALSE) {
+                    $columnNameTuo = cc_get_camel_str($column['COLUMN_NAME']);
                     //直接代入数组
                     $str .= <<<sss
-                                    <td><?php echo \${$column['COLUMN_NAME']}s[\$value['{$column['COLUMN_NAME']}']]; ?></td>
+                                    <td><?php echo \${$columnNameTuo}s[\$value['{$column['COLUMN_NAME']}']]; ?></td>
 
 sss;
                 } else {
@@ -849,11 +817,19 @@ sss;
         
         if ($columns && is_array($columns)) {
             foreach ($columns as $column) {
-                if ($column['COLUMN_COMMENT'] && stripos($column['COLUMN_COMMENT'], '$id$') !== FALSE) {
-
+                $start = stripos($column['COLUMN_COMMENT'], '$id$');
+                
+                //中文名称
+                $columnCnName = $this->_getCommentStr($column['COLUMN_COMMENT']);
+                if (!$columnCnName) {
+                    $columnCnName = $column['COLUMN_NAME'];
+                }
+                
+                if ($column['COLUMN_COMMENT'] && $start !== FALSE) {
+                
                     //关联id
                     $str .= <<<sss
-                            <option value="set_{$column['COLUMN_NAME']}">设置{$column['COLUMN_NAME']}</option>
+                            <option value="set_{$column['COLUMN_NAME']}">设置{$columnCnName}</option>
 
 sss;
                 } elseif ($column['COLUMN_COMMENT']) {
@@ -863,7 +839,7 @@ sss;
                     //生成代码
                     if ($statuss) {
                         $str .= <<<sss
-                            <option value="set_{$column['COLUMN_NAME']}">设置{$column['COLUMN_NAME']}</option>
+                            <option value="set_{$column['COLUMN_NAME']}">设置{$columnCnName}</option>
 
 sss;
                     }
@@ -880,15 +856,18 @@ sss;
         //隐藏筛选框
         if ($columns && is_array($columns)) {
             foreach ($columns as $column) {
-                if ($column['COLUMN_COMMENT'] && stripos($column['COLUMN_COMMENT'], '$id$') !== FALSE) {
-                    $idStr = substr($column['COLUMN_COMMENT'], 4);
+                
+                $start = stripos($column['COLUMN_COMMENT'], '$id$');
+                if ($column['COLUMN_COMMENT'] && $start !== FALSE) {
+                    $idStr = substr($column['COLUMN_COMMENT'], $start+4); //+4 $id$
+                    $idStrTuo = cc_get_camel_str($idStr);
                     
                     //关联id
                     $str .= <<<sss
                     <select name="set_{$column['COLUMN_NAME']}" id="set_{$column['COLUMN_NAME']}" style="display: none;">
                         <option value="">请选择</option>
-                        <?php if (\${$idStr}s != null) : ?>
-                            <?php foreach (\${$idStr}s as \$key=>\$value) : ?>
+                        <?php if (\${$idStrTuo}s != null) : ?>
+                            <?php foreach (\${$idStrTuo}s as \$key=>\$value) : ?>
                                 <option value="<?php echo \$value['id']; ?>"><?php echo \$value['id']; ?></option>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -898,14 +877,16 @@ sss;
                 } elseif ($column['COLUMN_COMMENT']) {
                     //获取状态选项的的处理
                     $statuss = $this->_getArrays($column['COLUMN_COMMENT']);
-
+                    
+                    $columnNameTuo = cc_get_camel_str($column['COLUMN_NAME']);
+                    
                     //生成代码
                     if ($statuss) {
                         $str .= <<<sss
                     <select name="set_{$column['COLUMN_NAME']}" id="set_{$column['COLUMN_NAME']}" style="display: none;">
                         <option value="">请选择</option>
-                        <?php if (\${$column['COLUMN_NAME']}s != null) : ?>
-                            <?php foreach (\${$column['COLUMN_NAME']}s as \$key=>\$value) : ?>
+                        <?php if (\${$columnNameTuo}s != null) : ?>
+                            <?php foreach (\${$columnNameTuo}s as \$key=>\$value) : ?>
                                 <option value="<?php echo \$key; ?>"><?php echo \$value; ?></option>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -942,17 +923,25 @@ sss;
         //处理筛选条件
         if ($columns && is_array($columns)) {
             foreach ($columns as $column) {
-
-                if($column['COLUMN_COMMENT'] && stripos($column['COLUMN_COMMENT'], '$id$') !== FALSE){
+                //中文名称
+                $columnCnName = $this->_getCommentStr($column['COLUMN_COMMENT']);
+                if (!$columnCnName) {
+                    $columnCnName = $column['COLUMN_NAME'];
+                }
+                
+                $start = stripos($column['COLUMN_COMMENT'], '$id$');
+                if($column['COLUMN_COMMENT'] && $start !== FALSE){
                     //关联id
-                    $idStr = substr($column['COLUMN_COMMENT'], 4);
+                    $idStr = substr($column['COLUMN_COMMENT'], $start+4); //+4 $id$
+                    $idStrTuo = cc_get_camel_str($idStr);
+                    
                     $str .= <<<sss
                     <div class="form-group">
-                        <label for="search_{$column['COLUMN_NAME']}">{$column['COLUMN_NAME']}</label>
+                        <label for="search_{$column['COLUMN_NAME']}">{$columnCnName}</label>
                         <select name="{$column['COLUMN_NAME']}" class="form-control" id="search_{$column['COLUMN_NAME']}">
                             <option value="">请选择</option>
-                            <?php if (\${$idStr}s != null) : ?>
-                                <?php foreach (\${$idStr}s as \$value) : ?>
+                            <?php if (\${$idStrTuo}s != null) : ?>
+                                <?php foreach (\${$idStrTuo}s as \$value) : ?>
                                     <option value="<?php echo \$value['id']; ?>" <?php if (\${$column['COLUMN_NAME']} === \$value['id']) : ?>selected="selected"<?php endif; ?>><?php echo \$value['id']; ?></option>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -965,15 +954,17 @@ sss;
                 } elseif ($column['COLUMN_COMMENT'] && stripos($column['COLUMN_COMMENT'], '$array$') !== FALSE) {
                     //获取状态选项的的处理
                     $statuss = $this->_getArrays($column['COLUMN_COMMENT']);
-
+                    
+                    $columnNameTuo = cc_get_camel_str($column['COLUMN_NAME']);
+                    
                     if ($statuss) {
                         $str .= <<<sss
                     <div class="form-group">
-                        <label for="search_{$column['COLUMN_NAME']}">{$column['COLUMN_NAME']}</label>
+                        <label for="search_{$column['COLUMN_NAME']}">{$columnCnName}</label>
                         <select name="{$column['COLUMN_NAME']}" class="form-control" id="search_{$column['COLUMN_NAME']}">
                             <option value="">请选择</option>
-                            <?php if (\${$column['COLUMN_NAME']}s != null) : ?>
-                                <?php foreach (\${$column['COLUMN_NAME']}s as \$key => \$value) : ?>
+                            <?php if (\${$columnNameTuo}s != null) : ?>
+                                <?php foreach (\${$columnNameTuo}s as \$key => \$value) : ?>
                                     <option value="<?php echo \$key; ?>" <?php if (\${$column['COLUMN_NAME']} === (string) \$key) : ?>selected="selected"<?php endif; ?>><?php echo \$value; ?></option>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -984,22 +975,22 @@ sss;
 sss;
                     }
                 
-                } elseif (in_array($column['DATA_TYPE'], array('datetime', 'timestamp'))) {
+                } elseif (in_array($column['DATA_TYPE'], array('datetime', 'timestamp', 'date'))) {
                     //日期时间
                     $str .= <<<sss
                     <div class="form-group">
-                        <label>{$column['COLUMN_NAME']}</label>
+                        <label>{$columnCnName}</label>
                         <input name="{$column['COLUMN_NAME']}_start" data-provide="datepicker" class="form-control" type="text" value="<?php echo \${$column['COLUMN_NAME']}_start; ?>" placeholder=">= 起始日期"> - 
                         <input name="{$column['COLUMN_NAME']}_end" data-provide="datepicker" class="form-control" type="text" value="<?php echo \${$column['COLUMN_NAME']}_end; ?>" placeholder="< 结束日期">
                     </div>
 
 
 sss;
-                } else if ($column['COLUMN_COMMENT'] == '$max$' && in_array($column['DATA_TYPE'], array('int', 'tinyint', 'smallint', 'mediumint', 'bigint', 'float', 'double', 'decimal'))) {
+                } else if (stripos($column['COLUMN_COMMENT'], '$max$') !== false && in_array($column['DATA_TYPE'], array('int', 'tinyint', 'smallint', 'mediumint', 'bigint', 'float', 'double', 'decimal'))) {
                     //大小于号生成
                     $str .= <<<sss
                     <div class="form-group">
-                        <label>{$column['COLUMN_NAME']}范围</label>
+                        <label>{$columnCnName}范围</label>
                         <input name="{$column['COLUMN_NAME']}_min" class="form-control" type="text" value="<?php echo \${$column['COLUMN_NAME']}_min; ?>" placeholder=">= input"> - 
                         <input name="{$column['COLUMN_NAME']}_max" class="form-control" type="text" value="<?php echo \${$column['COLUMN_NAME']}_max; ?>" placeholder="< input">
                     </div>
@@ -1010,7 +1001,7 @@ sss;
                     //普通的数字
                     $str .= <<<sss
                     <div class="form-group">
-                        <label for="search_{$column['COLUMN_NAME']}">{$column['COLUMN_NAME']}</label>
+                        <label for="search_{$column['COLUMN_NAME']}">{$columnCnName}</label>
                         <input type="text" name="{$column['COLUMN_NAME']}" class="form-control" id="search_{$column['COLUMN_NAME']}" value="<?php echo \${$column['COLUMN_NAME']}; ?>">
                     </div>
 
@@ -1045,14 +1036,14 @@ model;
     
     private function _getViewSaveStr($tableName, $columns) {
         //驼峰命名
-        $tTableName = cc_get_hump_str($tableName);
+        $tTableName = cc_get_camel_str($tableName);
         
         $str = <<<model
-<?php \$this->load->view('backend/_header', array('onView' => '$tTableName')); ?>
+<?php \$this->load->view('backend/_header', array(
+    'title' => '编辑{$tableName}',
+    'onView' => '{$tTableName}',
+)); ?>
 <script type="text/javascript">
-    $(document).ready(function () {
-
-    });
 </script>
 
 <div class="row">
@@ -1079,23 +1070,31 @@ model;
         //save条件
         if ($columns && is_array($columns)) {
             foreach ($columns as $column) {
-
-                if($column['COLUMN_COMMENT'] && stripos($column['COLUMN_COMMENT'], '$id$') !== FALSE){
+                $start = stripos($column['COLUMN_COMMENT'], '$id$');
+                
+                //中文名称
+                $columnCnName = $this->_getCommentStr($column['COLUMN_COMMENT']);
+                if (!$columnCnName) {
+                    $columnCnName = $column['COLUMN_NAME'];
+                }
+                
+                if($column['COLUMN_COMMENT'] && $start !== FALSE){
                     //关联id
-                    $idStr = substr($column['COLUMN_COMMENT'], 4);
+                    $idStr = substr($column['COLUMN_COMMENT'], $start+4); //+4 $id$
+                    $idStrTuo = cc_get_camel_str($idStr);
+                    
                     $str .= <<<sss
            <div class="form-group<?php if (form_error('{$column['COLUMN_NAME']}')) : ?> has-error<?php endif; ?>">
-                <label for="input_{$column['COLUMN_NAME']}" class="control-label">{$column['COLUMN_NAME']}</label>
+                <label for="input_{$column['COLUMN_NAME']}" class="control-label">{$columnCnName}</label>
                 <select name="{$column['COLUMN_NAME']}" class="form-control">
                     <option value="">请选择</option>
-                    <?php if (\${$idStr}s != null) : ?>
-                        <?php foreach (\${$idStr}s as \$value) : ?>
+                    <?php if (\${$idStrTuo}s != null) : ?>
+                        <?php foreach (\${$idStrTuo}s as \$value) : ?>
                             <option value="<?php echo \$value['id']; ?>" <?php if (\$row['{$column['COLUMN_NAME']}'] === (string)\$value['id'] || set_value('{$column['COLUMN_NAME']}') === (string)\$value['id']) : ?>selected="selected"<?php endif; ?>><?php echo \$value['id']; ?></option>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </select>
-                <span id="helpBlock" class="help-block"></span>
-                <?php echo \$this->backend_lib->formError('{$column['COLUMN_NAME']}'); ?>
+                <span id="helpBlock" class="help-block"><?php echo form_error('{$column['COLUMN_NAME']}'); ?></span>
             </div>
 
 
@@ -1104,20 +1103,21 @@ sss;
                 } elseif ($column['COLUMN_COMMENT'] && stripos($column['COLUMN_COMMENT'], '$array$') !== FALSE) {
                     //获取状态选项的的处理
                     $statuss = $this->_getArrays($column['COLUMN_COMMENT']);
-
+                    
+                    $columnNameTuo = cc_get_camel_str($column['COLUMN_NAME']);
+                    
                     if ($statuss) {
                         $str .= <<<sss
             <div class="form-group<?php if (form_error('{$column['COLUMN_NAME']}')) : ?> has-error<?php endif; ?>">
-                <label for="input_{$column['COLUMN_NAME']}" class="control-label">{$column['COLUMN_NAME']}</label>
+                <label for="input_{$column['COLUMN_NAME']}" class="control-label">{$columnCnName}</label>
                 <select name="{$column['COLUMN_NAME']}" class="form-control" id="input_{$column['COLUMN_NAME']}">
-                    <?php if (\${$column['COLUMN_NAME']}s) : ?>
-                        <?php foreach (\${$column['COLUMN_NAME']}s as \$key => \$value) : ?>
+                    <?php if (\${$columnNameTuo}s) : ?>
+                        <?php foreach (\${$columnNameTuo}s as \$key => \$value) : ?>
                             <option value="<?php echo \$key; ?>" <?php if (\$row['{$column['COLUMN_NAME']}'] === (string) \$key || set_value('{$column['COLUMN_NAME']}') === (string) \$key) : ?>selected="selected"<?php endif; ?>><?php echo \$value; ?></option>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </select>
-                <span id="helpBlock" class="help-block"></span>
-                <?php echo \$this->backend_lib->formError('{$column['COLUMN_NAME']}'); ?>
+                <span id="helpBlock" class="help-block"><?php echo form_error('{$column['COLUMN_NAME']}'); ?></span>
             </div>
 
 
@@ -1128,10 +1128,9 @@ sss;
                     //文本框
                     $str .= <<<sss
             <div class="form-group<?php if (form_error('{$column['COLUMN_NAME']}')) : ?> has-error<?php endif; ?>">
-                <label for="input_{$column['COLUMN_NAME']}" class="control-label">{$column['COLUMN_NAME']}</label>
-                <textarea name="{$column['COLUMN_NAME']}" id="input_{$column['COLUMN_NAME']}" aria-describedby="helpBlock" class="form-control" rows="3"><?php echo \$this->backend_lib->getValue(set_value('{$column['COLUMN_NAME']}'), \$row['{$column['COLUMN_NAME']}']); ?></textarea>
-                <span id="helpBlock" class="help-block"></span>
-                <?php echo \$this->backend_lib->formError('{$column['COLUMN_NAME']}'); ?>
+                <label for="input_{$column['COLUMN_NAME']}" class="control-label">{$columnCnName}</label>
+                <textarea name="{$column['COLUMN_NAME']}" id="input_{$column['COLUMN_NAME']}" aria-describedby="helpBlock" class="form-control" rows="3"><?php echo cc_get_value(set_value('{$column['COLUMN_NAME']}'), \$row['{$column['COLUMN_NAME']}']); ?></textarea>
+                <span id="helpBlock" class="help-block"><?php echo form_error('{$column['COLUMN_NAME']}'); ?></span>
             </div>
 
 
@@ -1140,10 +1139,9 @@ sss;
                     //普通
                     $str .= <<<sss
             <div class="form-group<?php if (form_error('{$column['COLUMN_NAME']}')) : ?> has-error<?php endif; ?>">
-                <label for="input_{$column['COLUMN_NAME']}" class="control-label">{$column['COLUMN_NAME']}</label>
-                <input type="text" name="{$column['COLUMN_NAME']}" id="input_{$column['COLUMN_NAME']}" class="form-control" aria-describedby="helpBlock" value="<?php echo \$this->backend_lib->getValue(set_value('{$column['COLUMN_NAME']}'), \$row['{$column['COLUMN_NAME']}']); ?>">
-                <span id="helpBlock" class="help-block"></span>
-                <?php echo \$this->backend_lib->formError('{$column['COLUMN_NAME']}'); ?>
+                <label for="input_{$column['COLUMN_NAME']}" class="control-label">{$columnCnName}</label>
+                <input type="text" name="{$column['COLUMN_NAME']}" id="input_{$column['COLUMN_NAME']}" class="form-control" aria-describedby="helpBlock" value="<?php echo cc_get_value(set_value('{$column['COLUMN_NAME']}'), \$row['{$column['COLUMN_NAME']}']); ?>">
+                <span id="helpBlock" class="help-block"><?php echo form_error('{$column['COLUMN_NAME']}'); ?></span>
             </div>
 
 
@@ -1156,7 +1154,7 @@ sss;
         //结尾
         $str .= <<<model
             <input name="save" type="hidden" value="1" />
-            <input name="id" type="hidden" value="<?php echo \$this->backend_lib->getValue(set_value('id'), \$row['id']); ?>" />
+            <input name="id" type="hidden" value="<?php echo cc_get_value(set_value('id'), \$row['id']); ?>" />
             <input class="btn btn-primary" type="submit" value="保存" />
         </form>
         <p>&nbsp;</p>
@@ -1172,4 +1170,55 @@ model;
         return $str;
     }
 
+    protected function _getTableFields($tableName)
+    {           
+        //查询数据
+        $dbInformation = 'information_schema';
+        $infTable = 'COLUMNS';
+        $dbName = $this->db->database;
+        
+        $dbDriver = 'mysql';
+        
+        //连接数据库
+        $dbh = new PDO($dbDriver . ':host=' . $this->db->hostname . ';dbname=' . $dbInformation, $this->db->username, $this->db->password);
+        $dbh->query("SET NAMES 'UTF8'");
+
+        $sql = "SELECT `COLUMN_NAME`, `DATA_TYPE`,`CHARACTER_MAXIMUM_LENGTH`, `COLUMN_TYPE`, `COLUMN_COMMENT` FROM $infTable WHERE `TABLE_SCHEMA`='$dbName' AND `TABLE_NAME`='$tableName'";
+
+        $sth = $dbh->prepare($sql);
+        $sth->execute();
+        $result = $sth->fetchAll();
+        
+        return $result;
+    }
+    
+    protected function _getCamelClassName($str)
+    {
+        $tName = cc_get_camel_str($str, '_');
+
+        return ucfirst($tName);
+    }
+    
+    protected function _getCommentStr($comment)
+    {
+        //获取数据库字段中文自定义名称
+        $magicStrs = $this->_magicStr;
+        if ($magicStrs) {
+            if ($comment) {
+                //魔法符号循环查找
+                foreach ($magicStrs as $key => $value) {
+
+                    $start = stripos($comment, $value);
+                    if ($start !== false) {
+                        $commentArray = explode($value, $comment);
+
+                        //返回第一个value  文章id$id$article 返回文章
+                        return $commentArray[0];
+                    }
+                }
+                return $comment;
+            }
+        }
+        return '';
+    }
 }

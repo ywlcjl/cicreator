@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>CICreator网站后台</title>
+        <title><?php echo $title; ?><?php if (!$notShowName) : ?> - CICreator网站后台<?php endif; ?></title>
 
         <!-- Bootstrap -->
         <link href="/asset/backend/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -69,6 +69,7 @@
                                         <li <?php if ($onView == 'adminPermission'): ?>class="active"<?php endif; ?>><a href="<?php echo B_URL; ?>admin_permission">权限</a></li>
                                         <li role="separator" class="divider"></li>
                                         <li <?php if ($onView == 'setting'): ?>class="active"<?php endif; ?>><a href="<?php echo B_URL; ?>setting">系统设置</a></li>
+                                        <li <?php if ($onView == 'cronLog'): ?>class="active"<?php endif; ?>><a href="<?php echo B_URL; ?>cron_log">日志</a></li>
                                         <li <?php if ($onView == 'maintain'): ?>class="active"<?php endif; ?>><a href="<?php echo B_URL; ?>home/maintain">维护</a></li>
                                         <li <?php if ($onView == 'create'): ?>class="active"<?php endif; ?>><a href="<?php echo B_URL; ?>create">代码生成</a></li>
                                     </ul>

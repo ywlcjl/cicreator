@@ -1,4 +1,7 @@
-<?php $this->load->view('backend/_header', array('onView' => 'create')); ?>
+<?php $this->load->view('backend/_header', array(
+    'title' => '数据表明细',
+    'onView' => 'create'
+)); ?>
 <script type="text/javascript">
     $(document).ready(function() {
     });
@@ -61,7 +64,7 @@
                 <?php endif; ?>
             </div>
             <input name="post" type="hidden" value="1">
-            <input name="table" type="hidden" value="<?php echo $this->backend_lib->getValue(set_value('table')); ?>">
+            <input name="table" type="hidden" value="<?php echo cc_get_value(set_value('table')); ?>">
             <input class="btn btn-primary" type="submit" value="生成代码" onclick="return confirmAction();">
         </form>
         <p>&nbsp;</p>

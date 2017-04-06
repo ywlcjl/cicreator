@@ -1,7 +1,7 @@
 安装说明:
-1. 配置CodeIgniter 2.2.5框架使其能在虚拟机的根目录访问.
-2. 新建mysql数据库, 导入cicreator.sql,并修改application/config/database.php对应的mysql选项.
-3. 使用浏览器打开配置CodeIgniter框架的首页
+1. 配置CodeIgniter 3框架使其能在虚拟机的根目录访问, 如cicreator.local
+2. 新建mysql数据库cicreator, 导入cicreator.sql,并修改application/config/database.php对应的mysql选项.
+3. 使用浏览器访问cicreator.local
 
 关于对CodeIgniter框架修改说明:
    CICreator并没有对CodeIgniter的核心进行任何改动, (即/system), 而所有在修改过的非框架核心文件都加有”~cc”的标识, 具体请自行搜索. 

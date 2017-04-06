@@ -1,4 +1,7 @@
-<?php $this->load->view('backend/_header', array('onView' => 'admin')); ?>
+<?php $this->load->view('backend/_header', array(
+    'title' => '管理员列表',
+    'onView' => 'admin'
+)); ?>
 <script type="text/javascript">
     $(document).ready(function () {
         //全选

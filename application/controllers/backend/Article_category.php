@@ -94,7 +94,7 @@ class article_category extends CI_Controller {
             }
 
             if ($success) {
-                $this->backend_lib->showMessage(B_URL . '/article_category', $message);
+                $this->backend_lib->showMessage(B_URL . 'article_category', $message);
             } else {
                 $data['message'] = $message;
                 $this->load->view('backend/article_category/save', $data);
@@ -142,7 +142,7 @@ class article_category extends CI_Controller {
             }
         }
 
-        $this->backend_lib->showMessage(B_URL . '/article_category', $message);
+        $this->backend_lib->showMessage(B_URL . 'article_category', $message);
     }
 
     public function delete() {
@@ -183,7 +183,7 @@ class article_category extends CI_Controller {
             $message = '没有分类ID';
         }
 
-        $this->backend_lib->showMessage(B_URL . '/article_category', $message);
+        $this->backend_lib->showMessage(B_URL . 'article_category', $message);
     }
 
 }

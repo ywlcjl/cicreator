@@ -164,14 +164,14 @@ if (!function_exists('cc_object_to_array')) {
 
 }
 
-if (!function_exists('cc_get_hump_str')) {
+if (!function_exists('cc_get_camel_str')) {
     /**
      * 字符串转驼峰字符串
      * @param type $str
      * @param type $dstr
      * @return type
      */
-    function cc_get_hump_str($str, $dstr = '_') {
+    function cc_get_camel_str($str, $dstr = '_') {
         $result = '';
         $sTemp = explode($dstr, $str);
         if ($sTemp) {
@@ -187,6 +187,28 @@ if (!function_exists('cc_get_hump_str')) {
         return $result;
     }
 
+}
+if (!function_exists('cc_get_value')) {
+    /**
+     * 获取表单值
+     * @param type $setValue
+     * @param type $rowVaule
+     * @param type $defaultValue
+     * @return type
+     */
+    function cc_get_value($setValue = '', $rowVaule = '', $defaultValue = '') {
+        $result = '';
+
+        if ($setValue !== '') {
+            $result = $setValue;
+        } elseif ($rowVaule !== '') {
+            $result = $rowVaule;
+        } else {
+            $result = $defaultValue;
+        }
+
+        return $result;
+    }
 }
 
 /* End of file MY_common_helper.php */

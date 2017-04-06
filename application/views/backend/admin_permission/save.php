@@ -1,4 +1,7 @@
-<?php $this->load->view('backend/_header', array('onView' => 'adminPermission')); ?>
+<?php $this->load->view('backend/_header', array(
+    'title' => '编辑权限',
+    'onView' => 'adminPermission'
+)); ?>
 <script type="text/javascript">
     $(document).ready(function() {
     });
@@ -24,16 +27,14 @@
         <form action="<?php echo B_URL; ?>admin_permission/save" method="post">
             <div class="form-group<?php if (form_error('name')) : ?> has-error<?php endif; ?>">
                 <label for="input_name" class="control-label">权限名称</label>
-                <input type="text" name="name" id="input_name" class="form-control" aria-describedby="helpBlock" value="<?php echo $this->backend_lib->getValue(set_value('name'), $row['name']); ?>">
-                <span id="helpBlock" class="help-block"></span>
-                <?php echo $this->backend_lib->formError('name'); ?>
+                <input type="text" name="name" id="input_name" class="form-control" aria-describedby="helpBlock" value="<?php echo cc_get_value(set_value('name'), $row['name']); ?>">
+                <span id="helpBlock" class="help-block"><?php echo form_error('name'); ?></span>
             </div>
             
             <div class="form-group<?php if (form_error('desc_txt')) : ?> has-error<?php endif; ?>">
                 <label for="input_desc_txt" class="control-label">描述</label>
-                <textarea name="desc_txt" id="input_name" aria-describedby="helpBlock" class="form-control" rows="3"><?php echo $this->backend_lib->getValue(set_value('desc_txt'), $row['desc_txt']); ?></textarea>
-                <span id="helpBlock" class="help-block"></span>
-                <?php echo $this->backend_lib->formError('desc_txt'); ?>
+                <textarea name="desc_txt" id="input_name" aria-describedby="helpBlock" class="form-control" rows="3"><?php echo cc_get_value(set_value('desc_txt'), $row['desc_txt']); ?></textarea>
+                <span id="helpBlock" class="help-block"><?php echo form_error('desc_txt'); ?></span>
             </div>
 
             <div class="form-group<?php if (form_error('status')) : ?> has-error<?php endif; ?>">
@@ -45,12 +46,11 @@
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </select>
-                <span id="helpBlock" class="help-block"></span>
-                <?php echo $this->backend_lib->formError('status'); ?>
+                <span id="helpBlock" class="help-block"><?php echo form_error('status'); ?></span>
             </div>
 
             <input name="save" type="hidden" value="1" />
-            <input name="id" type="hidden" value="<?php echo $this->backend_lib->getValue(set_value('id'), $row['id']); ?>" />
+            <input name="id" type="hidden" value="<?php echo cc_get_value(set_value('id'), $row['id']); ?>" />
             <input class="btn btn-primary" type="submit" value="保存" />
         </form>
         <p>&nbsp;</p>

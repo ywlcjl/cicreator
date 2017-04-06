@@ -1,4 +1,7 @@
-<?php $this->load->view('backend/_header', array('onView' => 'article')); ?>
+<?php $this->load->view('backend/_header', array(
+    'title' => '文章列表', 
+    'onView' => 'article'
+)); ?>
 
 <script type="text/javascript">
     $(document).ready(function() {

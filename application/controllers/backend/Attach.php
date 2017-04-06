@@ -26,8 +26,6 @@ class Attach extends CI_Controller {
     public function index() {
         $data = array();
         $param = array();
-        $inParams = array();
-        $likeParam = array();
 
         $data['articles'] = $this->article_model->getResult(array(), '', '', 'id DESC');
 
@@ -40,24 +38,19 @@ class Attach extends CI_Controller {
                 $param['id'] = $data['id'];
             }
 
-            $data['name'] = $this->input->get('name', TRUE);
-            if($data['name']) {
-                $likeParam['name'] = $data['name'];
-            }
-
             $data['orig_name'] = $this->input->get('orig_name', TRUE);
             if($data['orig_name']) {
-                $likeParam['orig_name'] = $data['orig_name'];
+                $param['orig_name like'] = $data['orig_name'];
             }
 
             $data['path'] = $this->input->get('path', TRUE);
             if($data['path']) {
-                $likeParam['path'] = $data['path'];
+                $param['path'] = $data['path'];
             }
 
             $data['type'] = $this->input->get('type', TRUE);
             if($data['type']) {
-                $likeParam['type'] = $data['type'];
+                $param['type'] = $data['type'];
             }
 
             $data['article_id'] = $this->input->get('article_id', TRUE);
@@ -72,53 +65,19 @@ class Attach extends CI_Controller {
                 $param['create_time <'] = date('Y-m-d', strtotime($data['create_time_end']));
             }
 
-}
+        }
 
         //自动获取get参数
-        $urlGet = '';
-        $gets = $this->input->get();
-        if ($gets) {
-            $i = 0;
-            foreach ($gets as $getKey => $get) {
-                if ($i) {
-                    $urlGet .= "&$getKey=$get";
-                } else {
-                    $urlGet .= "/?$getKey=$get";
-                }
-                $i++;
-            }
-        }
-                
-        //排序
-        $orderBy = $this->input->get('orderBy', TRUE);
-        $orderBySQL = 'id DESC';
-        if ($orderBy == 'idASC') {
-            $orderBySQL = 'id ASC';
-        }
-        $data['orderBy'] = $orderBy;
-                
+        $urlGet = $this->backend_lib->getGetStr();
+        
         //分页参数
-        $pageUrl = B_URL.'attach/index';  //分页链接
-        $pageUri = 4;   //URL参数位置
-        $pagePer = 20;  //每页数量
-        $suffix = $urlGet;   //GET参数
-        //计算分页起始条目
-        $pageNum = intval($this->uri->segment($pageUri)) ? intval($this->uri->segment($pageUri)) : 1;
-        $startRow = ($pageNum - 1) * $pagePer;
-
-        //获取数据
-        $result = $this->attach_model->getResult($param, $pagePer, $startRow, $orderBySQL, $inParams, $likeParam);
-
-        //生成分页链接
-        $total = $this->attach_model->count($param, $inParams, $likeParam);
-        $this->backend_lib->createPage($pageUrl, $pageUri, $pagePer, $total, $suffix);  //创建分页链接
-        //获取联表结果
-        if ($result) {
-            foreach ($result as $key => $value) {
-
-            }
-        }
-
+        $pageUrl = B_URL.'article/index';
+        $pagePer = 20;
+        $suffix = $urlGet;
+        
+        //分页数据
+        $result = $this->attach_model->getPage($pageUrl, $pagePer, $suffix, $param, 'id DESC');
+        
         $data['result'] = $result;
 
         $this->load->view('backend/attach/index', $data);

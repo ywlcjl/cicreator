@@ -1,4 +1,7 @@
-<?php $this->load->view('backend/_header', array('onView' => 'articleCategory')); ?>
+<?php $this->load->view('backend/_header', array(
+    'title' => '分类列表',
+    'onView' => 'articleCategory'
+)); ?>
 <script type="text/javascript">
     $(document).ready(function() {
         //表单全选

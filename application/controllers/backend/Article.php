@@ -27,8 +27,6 @@ class Article extends CI_Controller {
     public function index() {
         $data = array();
         $param = array();
-        $inParams = array();
-        $likeParam = array();
         
         $data['categorys'] = $this->article_category_model->getQueueCategory();
         $data['admins'] = $this->admin_model->getResult(array());
@@ -45,7 +43,7 @@ class Article extends CI_Controller {
             
             $data['title'] = $this->input->get('title', TRUE);
             if($data['title']) {
-                $likeParam['title'] = $data['title'];
+                $param['title like'] = $data['title'];
             }
             
             $data['author'] = $this->input->get('author', TRUE);
@@ -90,41 +88,21 @@ class Article extends CI_Controller {
         }
         
         //自动获取get参数
-        $urlGet = '';
-        $gets = $this->input->get();
-        if($gets) {
-            $i = 0;
-            foreach($gets as $getKey=>$get) {
-                if($i) {
-                    $urlGet .= "&$getKey=$get";
-                } else {
-                    $urlGet .= "/?$getKey=$get";
-                }
-                $i++;
-            }
-        }
+        $urlGet = $this->backend_lib->getGetStr();
         
         //分页参数
-        $pageUrl = B_URL . "article/index";  //分页链接
-        $pageUri = 4;   //URL参数位置
-        $pagePer = 30;  //每页数量
-        $suffix = $urlGet;   //GET参数
-        //计算分页起始条目
-        $pageNum = intval($this->uri->segment($pageUri)) ? intval($this->uri->segment($pageUri)) : 1;
-        $startRow = ($pageNum - 1) * $pagePer;
+        $pageUrl = B_URL.'article/index';
+        $pagePer = 20;
+        $suffix = $urlGet;
         
-        //获取数据
-        $result = $this->article_model->getResult($param, $pagePer, $startRow, 'id DESC', $inParams, $likeParam);
-
-        //生成分页链接
-        $total = $this->article_model->count($param, $inParams, $likeParam);
-        $this->backend_lib->createPage($pageUrl, $pageUri, $pagePer, $total, $suffix);  //创建分页链接
-
+        //分页数据
+        $result = $this->article_model->getPage($pageUrl, $pagePer, $suffix, $param, 'id DESC');
+        
         //获取联表结果
         if($result) {
             foreach($result as $key=>$value) {
                 $category = $this->article_category_model->getRow(array('id'=>$value['article_category_id']));
-                $result[$key]['categoryName'] = $value ? $value['name'] : '未分类';
+                $result[$key]['categoryName'] = $category ? $category['name'] : '未分类';
                 
                 $admin = $this->admin_model->getRow(array('id'=>$value['admin_id']));
                 $result[$key]['adminName'] = $admin ? $admin['username'] : '暂无';

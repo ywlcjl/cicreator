@@ -1,4 +1,7 @@
-<?php $this->load->view('backend/_header', array('onView' => 'adminPermission')); ?>
+<?php $this->load->view('backend/_header', array(
+    'title' => '权限列表',
+    'onView' => 'adminPermission'
+)); ?>
 <script type="text/javascript">
     $(document).ready(function () {
         //表单全选

@@ -28,21 +28,13 @@ class Admin extends CI_Controller {
         $data['statuss'] = $this->admin_model->getStatus();
 
         //分页参数
-        $pageUrl = B_URL . 'admin/index';  //分页链接
-        $pageUri = 4;   //URL参数位置
-        $pagePer = 20;  //每页数量
-        $suffix = "";   //GET参数
-        //计算分页起始条目
-        $pageNum = intval($this->uri->segment($pageUri)) ? intval($this->uri->segment($pageUri)) : 1;
-        $startRow = ($pageNum - 1) * $pagePer;
-
-        //获取数据
-        $data['result'] = $this->admin_model->getResult($param, $pagePer, $startRow, 'id DESC');
-
-        //生成分页链接
-        $total = $this->admin_model->count($param);
-        $this->backend_lib->createPage($pageUrl, $pageUri, $pagePer, $total, $suffix);  //创建分页链接
-
+        $pageUrl = B_URL.'admin_permission/index';
+        $pagePer = 20;
+        $suffix = "";
+        
+        //分页数据
+        $data['result'] = $this->admin_model->getPage($pageUrl, $pagePer, $suffix, $param, 'id DESC');
+        
         $this->load->view('backend/admin/index', $data);
     }
 

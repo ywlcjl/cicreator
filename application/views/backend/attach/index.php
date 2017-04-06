@@ -1,4 +1,7 @@
-<?php $this->load->view('backend/_header', array('onView' => 'attach')); ?>
+<?php $this->load->view('backend/_header', array(
+    'title' => '附件列表',
+    'onView' => 'attach',
+)); ?>
 <script type="text/javascript">
     $(document).ready(function() {
         //表单全选
@@ -46,11 +49,11 @@
                     <thead>
                         <tr>
                             <th>id</th>
-                            <th>orig_name</th>
-                            <th>path</th>
-                            <th>type</th>
-                            <th>article_id</th>
-                            <th>create_time</th>
+                            <th>原名称</th>
+                            <th>路径</th>
+                            <th>类型</th>
+                            <th>文章ID</th>
+                            <th>创建时间</th>
                             <th>操作</th>
                         </tr>
                     </thead>
@@ -112,32 +115,27 @@
                 <div class="col-md-8">
                 <form action="<?php echo B_URL; ?>attach/index/" method="get">
                     <div class="form-group">
-                        <label for="search_id">id</label>
+                        <label for="search_id">ID</label>
                         <input type="text" name="id" class="form-control" id="search_id" value="<?php echo $id; ?>">
                     </div>
 
                     <div class="form-group">
-                        <label for="search_id">name</label>
-                        <input type="text" name="name" class="form-control" id="search_name" value="<?php echo $name; ?>">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="search_id">orig_name</label>
+                        <label for="search_id">原名称</label>
                         <input type="text" name="orig_name" class="form-control" id="search_orig_name" value="<?php echo $orig_name; ?>">
                     </div>
 
                     <div class="form-group">
-                        <label for="search_id">path</label>
+                        <label for="search_id">路径</label>
                         <input type="text" name="path" class="form-control" id="search_path" value="<?php echo $path; ?>">
                     </div>
 
                     <div class="form-group">
-                        <label for="search_id">type</label>
+                        <label for="search_id">类型</label>
                         <input type="text" name="type" class="form-control" id="search_type" value="<?php echo $type; ?>">
                     </div>
 
                     <div class="form-group">
-                        <label for="search_category">article_id</label>
+                        <label for="search_category">文章ID</label>
                         <select name="article_id" class="form-control" id="search_article_id">
                             <option value="">请选择</option>
                             <?php if ($articles != null) : ?>
@@ -149,7 +147,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label>create_time</label>
+                        <label>创建时间</label>
                         <input name="create_time_start" data-provide="datepicker" class="form-control" type="text" value="<?php echo $create_time_start; ?>" placeholder=">= 起始日期"> - 
                         <input name="create_time_end" data-provide="datepicker" class="form-control" type="text" value="<?php echo $create_time_end; ?>" placeholder="< 结束日期">
                     </div>

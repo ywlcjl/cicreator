@@ -74,13 +74,13 @@ $active_group = 'default';
 $query_builder = TRUE;
 
 $db['default'] = array(
-	'dsn'	=> '',
+	'dsn'	=> 'mysql:host=localhost;port=3306;dbname=cicreator',  //~cc
 	'hostname' => 'localhost',
 	'username' => 'cicreator',
 	'password' => 'password',
 	'database' => 'cicreator',
 	//'dbdriver' => 'mysqli', //~cc
-	'dbdriver' => 'mysql',
+	'dbdriver' => 'pdo',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
 	'db_debug' => (ENVIRONMENT !== 'production'),

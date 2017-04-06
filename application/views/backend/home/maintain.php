@@ -1,4 +1,7 @@
-<?php $this->load->view('backend/_header', array('onView' => 'maintain')); ?>
+<?php $this->load->view('backend/_header', array(
+    'title' => '维护',
+    'onView' => 'maintain'
+)); ?>
 <div class="row">
     <div class="col-md-6">
         <p class="bd_title">维护</p>

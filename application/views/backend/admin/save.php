@@ -1,4 +1,7 @@
-<?php $this->load->view('backend/_header', array('onView' => 'admin')); ?>
+<?php $this->load->view('backend/_header', array(
+    'title' => '编辑管理员',
+    'onView' => 'admin'
+)); ?>
 <script type="text/javascript">
     $(document).ready(function () {
 
@@ -25,16 +28,14 @@
         <form action="<?php echo B_URL; ?>admin/save" method="post">
             <div class="form-group<?php if (form_error('username')) : ?> has-error<?php endif; ?>">
                 <label for="input_username" class="control-label">用户名</label>
-                <input type="text" name="username" id="input_username" class="form-control" aria-describedby="helpBlock" value="<?php echo $this->backend_lib->getValue(set_value('username'), $row['username']); ?>">
-                <span id="helpBlock" class="help-block">大于3个字符少于18个字符</span>
-                <?php echo $this->backend_lib->formError('username'); ?>
+                <input type="text" name="username" id="input_username" class="form-control" aria-describedby="helpBlock" placeholder="长度在3~20个字符" value="<?php echo cc_get_value(set_value('username'), $row['username']); ?>">
+                <span id="helpBlock" class="help-block"><?php echo form_error('username'); ?></span>
             </div>
 
             <div class="form-group<?php if (form_error('password')) : ?> has-error<?php endif; ?>">
                 <label for="input_password" class="control-label">密码</label>
-                <input type="password" name="password" id="input_password" class="form-control" aria-describedby="helpBlock" value="">
-                <span id="helpBlock" class="help-block">密码少于18位</span>
-                <?php echo $this->backend_lib->formError('password'); ?>
+                <input type="password" name="password" id="input_password" class="form-control" aria-describedby="helpBlock" placeholder="请输入6~20位密码" value="">
+                <span id="helpBlock" class="help-block"><?php echo form_error('password'); ?></span>
             </div>
             
             <div class="form-group<?php if (form_error('status')) : ?> has-error<?php endif; ?>">
@@ -46,12 +47,11 @@
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </select>
-                <span id="helpBlock" class="help-block"></span>
-                <?php echo $this->backend_lib->formError('status'); ?>
+                <span id="helpBlock" class="help-block"><?php echo form_error('status'); ?></span>
             </div>
 
             <input name="save" type="hidden" value="1" />
-            <input name="id" type="hidden" value="<?php echo $this->backend_lib->getValue(set_value('id'), $row['id']); ?>" />
+            <input name="id" type="hidden" value="<?php echo cc_get_value(set_value('id'), $row['id']); ?>" />
             <input class="btn btn-primary" type="submit" value="保存">
         </form>
         <p>&nbsp;</p>
