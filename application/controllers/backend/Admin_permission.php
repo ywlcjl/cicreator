@@ -24,7 +24,6 @@ class Admin_permission extends CI_Controller {
     public function index() {
         $data = array();
         $param = array();
-        $this->backend_lib->cronLog(1, 'ddd');
         $data['statuss'] = $this->admin_permission_model->getStatus();
         
         //分页参数

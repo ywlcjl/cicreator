@@ -28,7 +28,7 @@ class Admin extends CI_Controller {
         $data['statuss'] = $this->admin_model->getStatus();
 
         //分页参数
-        $pageUrl = B_URL.'admin_permission/index';
+        $pageUrl = B_URL.'admin/index';
         $pagePer = 20;
         $suffix = "";
         

@@ -68,48 +68,6 @@ class Backend_lib extends Base_lib {
     }
 
     /**
-     * 分页创建
-     * @param type $baseUrl
-     * @param type $uriSegment
-     * @param type $perPage
-     * @param type $totalRows
-     */
-    public function createPage($baseUrl, $uriSegment, $perPage = 20, $totalRows = 200, $suffix = '') {
-        $this->_CI->load->library('pagination');
-        $config = array();
-        $config['base_url'] = $baseUrl;         //路径 site_url() . '/backend/admin/index';
-        $config['uri_segment'] = $uriSegment;   //路由参数
-        $config['total_rows'] = $totalRows;     //总数
-        $config['per_page'] = $perPage;         //每页显示
-        $config['suffix'] = $suffix;            //后缀
-        $config['num_links'] = 5;              //显示页数
-        $config['use_page_numbers'] = TRUE;     //使用正常的数字
-        
-        $config['first_link'] = '<span aria-hidden="true">First</span>';
-        $config['first_tag_open'] = '<li>';
-        $config['first_tag_close'] = '</li>';
-        
-        $config['last_link'] = '<span aria-hidden="true">Last</span>';
-        $config['last_tag_open'] = '<li>';
-        $config['last_tag_close'] = '</li>';
-        
-        $config['next_link'] = '<span aria-hidden="true">&raquo;</span>';
-        $config['next_tag_open'] = '<li>';
-        $config['next_tag_close'] = '</li>';
-        
-        $config['prev_link'] = '<span aria-hidden="true">&laquo;</span>';
-        $config['prev_tag_open'] = '<li>';
-        $config['prev_tag_close'] = '</li>';
-        
-        $config['cur_tag_open'] = '<li class="active"><a href="#">';
-        $config['cur_tag_close'] = ' <span class="sr-only">(current)</span></a></li>';
-        $config['num_tag_open'] = '<li>';
-        $config['num_tag_close'] = '</li>';
-
-        $this->_CI->pagination->initialize($config);
-    }
-
-    /**
      * 信息提示跳转
      * @param type $url
      * @param type $message
