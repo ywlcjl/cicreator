@@ -49,7 +49,7 @@ class Admin extends CI_Controller {
         if ($this->input->post('save', TRUE) > 0) {
             //执行表单操作
             $this->form_validation->set_rules('id', 'ID', 'trim');
-            $this->form_validation->set_rules('username', '用户名', 'required|trim|min_length[3]|max_length[18]');
+            $this->form_validation->set_rules('username', '用户名', 'required|trim|min_length[3]|max_length[20]');
             $this->form_validation->set_rules('password', '密码', 'trim');
             $this->form_validation->set_rules('status', '状态', 'required|trim');
 
