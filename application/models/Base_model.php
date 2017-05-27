@@ -287,9 +287,16 @@ class Base_model extends CI_Model {
         //使用正则替换SQL, 生成count(*)统计查询分页总数
         $countSql = $sql;
         
-        $pattern = '/^SELECT.*FROM/i';
-        $queryCount = preg_replace($pattern,'SELECT COUNT(*) AS total FROM', $countSql); 
-
+        //如果是分组查询则需要做子查询
+        if (stristr($countSql, 'GROUP BY') !== FALSE) {
+            $pattern = '/^SELECT.*FROM/i';
+            $queryCount = preg_replace($pattern,'SELECT COUNT(*) AS total FROM (SELECT COUNT(*) FROM', $countSql);
+            $queryCount .= ") AS a";
+        } else {
+            $pattern = '/^SELECT.*FROM/i';
+            $queryCount = preg_replace($pattern,'SELECT COUNT(*) AS total FROM', $countSql); 
+        }
+        
         //返回数组
         $query = $this->db->query($queryCount);
         $row = $query->row_array();
