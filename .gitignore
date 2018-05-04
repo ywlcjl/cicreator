@@ -2,3 +2,11 @@
 nbproject/project.properties
 
 nbproject/project.xml
+
+application/controllers/backend/Example.php
+
+application/models/Example_model.php
+
+application/views/backend/example/index.php
+
+application/views/backend/example/save.php
