@@ -8,6 +8,8 @@
         selector: '#editor_id',
         language: 'zh_CN',
         height: 300,
+        content_style: "#tinymce {font-size: 14px;}",
+//        preview_styles: false,
         plugins: [
             'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
             'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
