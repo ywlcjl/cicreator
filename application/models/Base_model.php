@@ -103,7 +103,10 @@ class Base_model extends CI_Model {
     public function update($data, $param) {
         //更新记录
         if (is_array($param) && $param != null) {
-            $this->db->update($this->tableName, $data, $param);
+            //高级查询条件处理
+            $this->advWhere($param);
+            $this->advOrWhere($orParam);
+            $this->db->update($this->tableName, $data);
         }
         
         if ($this->db->affected_rows() > 0) {
@@ -120,7 +123,10 @@ class Base_model extends CI_Model {
      */
     public function delete($param) {
         if (is_array($param) && $param != null) {
-            $this->db->delete($this->tableName, $param);
+            //高级查询条件处理
+            $this->advWhere($param);
+            $this->advOrWhere($orParam);
+            $this->db->delete($this->tableName);
         }
 
         if ($this->db->affected_rows() > 0) {
